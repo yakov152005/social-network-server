@@ -1,15 +1,26 @@
-package org.server.socialnetworkserver.service;
+package org.server.socialnetworkserver.entitys;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
+@Table(name = "USER")
 public class User{
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+    @Column(nullable = false, unique = true)
     private String username;
+    @Column(nullable = false)
     private String password;
+    @Column(nullable = false)
     private String phoneNumber;
+    @Column(nullable = false)
     private int age;
+    @OneToMany(mappedBy = "follower")
+    private List<Follow> followers;
+
 
     public User(String username, String password, String phoneNumber, int age) {
         this.username = username;
@@ -22,6 +33,7 @@ public class User{
     public User() {
 
     }
+
 
     public String getUsername() {
         return username;
@@ -53,6 +65,18 @@ public class User{
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", age=" + age +
+                ", followers=" + followers +
+                '}';
     }
 }
 

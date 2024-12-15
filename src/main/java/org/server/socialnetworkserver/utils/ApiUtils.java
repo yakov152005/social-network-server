@@ -10,7 +10,7 @@ import java.util.List;
 
 
 import static org.server.socialnetworkserver.utils.Constants.SmsConstants.*;
-import static org.server.socialnetworkserver.utils.HelpMethods.*;
+import static org.server.socialnetworkserver.service.HelpMethods.*;
 
 
 public class ApiUtils {

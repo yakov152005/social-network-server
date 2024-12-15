@@ -1,7 +1,6 @@
 package org.server.socialnetworkserver.controller;
-
 import org.server.socialnetworkserver.repository.UserRepository;
-import org.server.socialnetworkserver.service.User;
+import org.server.socialnetworkserver.entitys.User;
 import org.server.socialnetworkserver.utils.ApiUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -9,15 +8,19 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import static org.server.socialnetworkserver.utils.HelpMethods.*;
+import static org.server.socialnetworkserver.service.HelpMethods.*;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    @Autowired
     private UserRepository userRepository;
     private final Map<String, String> verificationCodes = new HashMap<>();
+
+    @Autowired
+    public UserController(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
 
     @PostMapping("/addUser")
     public String addUser(@RequestBody User user) {
@@ -72,7 +75,6 @@ public class UserController {
                 .map(User::getUsername).toList();
         return list;
     }
-
 
 
 
