@@ -1,9 +1,19 @@
 package org.server.socialnetworkserver.utils;
 
 public class Constants {
-    public static final String SCHEMA = "social_network_db";
-    public static final String DB_USERNAME = "root";
-    public static final String DB_PASSWORD = "Rtadsuk152005";
+
+    public class DataBase{
+        public static final String DB_HOST = "localhost";
+        public static final String DB_USER = "root";
+        public static final String DB_PASSWORD = "Rtadsuk152005";
+        public static final String DB_NAME = "social_network_db";
+
+    }
+
+    public class EmailConstants{
+        public static final String SENDER_EMAIL = "servicenetwork62@gmail.com"; // כתובת המייל
+        public static final String SENDER_PASSWORD = "sinh araw dtpo vqoe"; // סיסמת האפליקציה
+    }
 
     public class SmsConstants{
         public static final String SMS_TOKEN = "ZmVlZGJhY2sxOnlheGZxMzJpd2lnYW15bHBvMG9tNHVycjU";

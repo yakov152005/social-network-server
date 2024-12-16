@@ -17,23 +17,33 @@ public class User{
     @Column(nullable = false)
     private String phoneNumber;
     @Column(nullable = false)
+    private String email;
+    @Column(nullable = false)
     private int age;
     @OneToMany(mappedBy = "follower")
     private List<Follow> followers;
 
-
-    public User(String username, String password, String phoneNumber, int age) {
+    public User(long id, String username, String password, String phoneNumber, String email, int age, List<Follow> followers) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.phoneNumber = phoneNumber;
+        this.email = email;
         this.age = age;
+        this.followers = followers;
     }
 
-
-    public User() {
+    public User(){
 
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getUsername() {
         return username;
@@ -59,12 +69,28 @@ public class User{
         this.phoneNumber = phoneNumber;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public int getAge() {
         return age;
     }
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public List<Follow> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(List<Follow> followers) {
+        this.followers = followers;
     }
 
     @Override
@@ -74,6 +100,7 @@ public class User{
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
                 ", age=" + age +
                 ", followers=" + followers +
                 '}';

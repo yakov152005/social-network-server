@@ -13,7 +13,7 @@ import static org.server.socialnetworkserver.utils.Constants.SmsConstants.*;
 import static org.server.socialnetworkserver.service.HelpMethods.*;
 
 
-public class ApiUtils {
+public class ApiSmsSender {
     public static void main(String[] args) {
         String verify = generatorCode();
         System.out.println( sendSms(verify,

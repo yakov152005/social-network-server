@@ -21,10 +21,11 @@ public class HelpMethods {
         return verifyCode;
     }
 
-    public static boolean checkIfNotNullData(String username,String password,String phoneNumber,int Age){
+    public static boolean checkIfNotNullData(String username,String password,String phoneNumber,String email,int Age){
         if (username == null || username.isEmpty() ||
                 password== null || password.isEmpty() ||
                 phoneNumber == null || phoneNumber.isEmpty() ||
+                email == null || email.isEmpty() ||
                 Age <= 0){
             return true;
         }
@@ -87,8 +88,10 @@ public class HelpMethods {
         return true;
     }
 
+    // לא לשכוח להוסיף בדיקה לאיימיל
+
     public static String checkAllFiled(User user, UserRepository userRepository){
-        if (checkIfNotNullData(user.getUsername(),user.getPassword(), user.getPhoneNumber(),user.getAge())){
+        if (checkIfNotNullData(user.getUsername(),user.getPassword(), user.getPhoneNumber(),user.getEmail(),user.getAge())){
             return ERROR_1;
         }
 

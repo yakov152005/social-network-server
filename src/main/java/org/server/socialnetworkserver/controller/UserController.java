@@ -1,7 +1,7 @@
 package org.server.socialnetworkserver.controller;
 import org.server.socialnetworkserver.repository.UserRepository;
 import org.server.socialnetworkserver.entitys.User;
-import org.server.socialnetworkserver.utils.ApiUtils;
+import org.server.socialnetworkserver.utils.ApiSmsSender;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static org.server.socialnetworkserver.service.HelpMethods.*;
+import static org.server.socialnetworkserver.utils.ApiEmailProcessor.sendEmail;
 
 @RestController
 @RequestMapping("/users")
@@ -28,7 +29,10 @@ public class UserController {
         if ( ERROR != null) {
             return ERROR;
         }
-
+        String sb = "Username: " + user.getUsername() + "\n" + " Password: " + user.getPassword() + "\n" +
+                " Email: " + user.getEmail();
+        System.out.println(sb);
+        System.out.println(sendEmail(user.getEmail(),"Details", sb));
         userRepository.save(user);
         return "Success: user " + user.getUsername() + " created.";
     }
@@ -46,7 +50,7 @@ public class UserController {
                     String verificationCode = generatorCode();
                     verificationCodes.put(username, verificationCode);
 
-                    ApiUtils.sendSms("Your verification code: " + verificationCode,
+                    ApiSmsSender.sendSms("Your verification code: " + verificationCode,
                             List.of(currentUser.getPhoneNumber()));
                     return true;
                 }
