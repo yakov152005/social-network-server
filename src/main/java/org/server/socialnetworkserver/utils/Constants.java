@@ -11,8 +11,8 @@ public class Constants {
     }
 
     public class EmailConstants{
-        public static final String SENDER_EMAIL = "servicenetwork62@gmail.com"; // כתובת המייל
-        public static final String SENDER_PASSWORD = "sinh araw dtpo vqoe"; // סיסמת האפליקציה
+        public static final String SENDER_EMAIL = "servicenetwork62@gmail.com"; 
+        public static final String SENDER_PASSWORD = "sinh araw dtpo vqoe";
         public static final String[] EMAILS_CONTAINS = {"walla.co.il", "walla.com", "gmail.com", "gmail.co.il", "edu.aac.ac.il"};
 
     }
