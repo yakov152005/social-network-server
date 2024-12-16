@@ -12,11 +12,11 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**") // מאפשר לכל ה-Endpoints
-                        .allowedOrigins("http://localhost:3000") // מקור ה-CORS שמותר
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // שיטות HTTP שמותרות
-                        .allowedHeaders("*") // כל הכותרות שמותרות
-                        .allowCredentials(true); // אם צריך Cookies או Authorization Headers
+                registry.addMapping("/**") 
+                        .allowedOrigins("http://localhost:3000")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*") 
+                        .allowCredentials(true); 
             }
         };
     }
