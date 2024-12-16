@@ -1,4 +1,5 @@
 package org.server.socialnetworkserver.controller;
+import org.server.socialnetworkserver.entitys.Response;
 import org.server.socialnetworkserver.repository.UserRepository;
 import org.server.socialnetworkserver.entitys.User;
 import org.server.socialnetworkserver.utils.ApiSmsSender;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import static org.server.socialnetworkserver.service.HelpMethods.*;
 import static org.server.socialnetworkserver.utils.ApiEmailProcessor.sendEmail;
+import static org.server.socialnetworkserver.utils.Constants.Errors.*;
 
 @RestController
 @RequestMapping("/users")
@@ -24,19 +26,23 @@ public class UserController {
     }
 
     @PostMapping("/addUser")
-    public String addUser(@RequestBody User user) {
-        final String ERROR = checkAllFiled(user,userRepository);
-        if ( ERROR != null) {
-            return ERROR;
+    public Response addUser(@RequestBody User user) {
+        final String error = checkAllFiled(user, userRepository);
+        int errorCode = errorCodeCheck(error);
+        if (errorCode != NO_ERROR ) {
+            return new Response(false, error,errorCode);
         }
-        String sb = "Username: " + user.getUsername() + "\n" + " Password: " + user.getPassword() + "\n" +
-                " Email: " + user.getEmail();
-        System.out.println(sb);
-        System.out.println(sendEmail(user.getEmail(),"Details", sb));
-        userRepository.save(user);
-        return "Success: user " + user.getUsername() + " created.";
-    }
 
+        String userDetails = "Username: " + user.getUsername() + "\n" +
+                "Password: " + user.getPassword() + "\n" +
+                "Phone number: " + user.getPhoneNumber() + "\n" +
+                "Email: " + user.getEmail();
+        System.out.println(userDetails);
+        System.out.println(sendEmail(user.getEmail(), "Details", userDetails));
+        userRepository.save(user);
+
+        return new Response(true, "Success: user " + user.getUsername() + " created.", errorCode);
+    }
 
 
     @PostMapping("/loginUser")

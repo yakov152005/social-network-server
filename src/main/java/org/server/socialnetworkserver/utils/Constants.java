@@ -13,6 +13,8 @@ public class Constants {
     public class EmailConstants{
         public static final String SENDER_EMAIL = "servicenetwork62@gmail.com"; // כתובת המייל
         public static final String SENDER_PASSWORD = "sinh araw dtpo vqoe"; // סיסמת האפליקציה
+        public static final String[] EMAILS_CONTAINS = {"walla.co.il", "walla.com", "gmail.com", "gmail.co.il", "edu.aac.ac.il"};
+
     }
 
     public class SmsConstants{
@@ -27,7 +29,15 @@ public class Constants {
                 " contain at least one special character -> " + HelpMethodConstants.SPECIAL_CHAR +
             ", and at least one letter.";
         public static final String ERROR_4 = "Failed: Phone number must start with 05 and be exactly 10 digits long.";
-        public static final String ERROR_5 = "Failed: This phone number is exist, please choose another phone number.";
+        public static final String ERROR_5 = "Failed: This Phone number is exist, please choose another phone number.";
+        public static final String ERROR_6 = "Failed: This email is exist, please choose another email.";
+        public static final String ERROR_7 = "Failed: The email must be in the style 'example@yourmail.com OR .co.il' ";
+
+        public static final int NO_ERROR = 1;
+        public static final int ERROR_USER = 2;
+        public static final int ERROR_PASSWORD = 3;
+        public static final int ERROR_PHONE = 4;
+        public static final int ERROR_EMAIL = 5;
     }
 
     public class HelpMethodConstants{

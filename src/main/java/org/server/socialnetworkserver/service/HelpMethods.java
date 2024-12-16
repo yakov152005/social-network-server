@@ -6,12 +6,28 @@ import org.server.socialnetworkserver.entitys.User;
 import java.util.List;
 import java.util.Random;
 
+import static org.server.socialnetworkserver.utils.Constants.EmailConstants.EMAILS_CONTAINS;
 import static org.server.socialnetworkserver.utils.Constants.Errors.*;
 import static org.server.socialnetworkserver.utils.Constants.HelpMethodConstants.*;
 
 public class HelpMethods {
 
     public static Random r = new Random();
+
+    public static int errorCodeCheck(String errorCheck){
+        if (errorCheck != null) {
+            if (errorCheck.contains("username")) {
+                return ERROR_USER;
+            } else if (errorCheck.contains("password")) {
+                return ERROR_PASSWORD;
+            } else if (errorCheck.contains("Phone")) {
+                return ERROR_PHONE;
+            } else if (errorCheck.contains("email")) {
+                return ERROR_EMAIL;
+            }
+        }
+        return NO_ERROR;
+    }
 
     public static String generatorCode(){
         String letters = LETTERS;
@@ -88,7 +104,28 @@ public class HelpMethods {
         return true;
     }
 
-    // לא לשכוח להוסיף בדיקה לאיימיל
+    public static boolean checkEmailValid(String email) {
+        String[] temp = email.split("@");
+        if (temp.length != 2) {
+            return false;
+        }
+        String domain = temp[1];
+        for (String validDomain : EMAILS_CONTAINS) {
+            if (domain.equalsIgnoreCase(validDomain)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static boolean checkIfEmailExist(String email, UserRepository userRepository){
+        for (User repUser : userRepository.findAll()){
+            if (email.equalsIgnoreCase(repUser.getEmail())){
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static String checkAllFiled(User user, UserRepository userRepository){
         if (checkIfNotNullData(user.getUsername(),user.getPassword(), user.getPhoneNumber(),user.getEmail(),user.getAge())){
@@ -111,6 +148,16 @@ public class HelpMethods {
         if (!checkIfSamePhoneNumber(user,userRepository)){
             return ERROR_5;
         }
+
+        if (checkIfEmailExist(user.getEmail(),userRepository)){
+            return ERROR_6;
+        }
+
+        if (!checkEmailValid(user.getEmail())){
+            return ERROR_7;
+        }
+
+
 
         return null;
     }
