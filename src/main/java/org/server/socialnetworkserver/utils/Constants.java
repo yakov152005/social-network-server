@@ -18,7 +18,7 @@ public class Constants {
     }
 
     public class SmsConstants{
-        public static final String SMS_TOKEN = "ZmVlZGJhY2sxOnlheGZxMzJpd2lnYW15bHBvMG9tNHVycjU";
+        public static final String SMS_TOKEN = "";
         public static final String URL_SMS = "https://capi.inforu.co.il/api/v2/SMS/SendSms";
     }
 
