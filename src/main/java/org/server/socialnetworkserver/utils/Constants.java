@@ -1,5 +1,12 @@
 package org.server.socialnetworkserver.utils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public class Constants {
 
     public class DataBase{
@@ -18,7 +25,20 @@ public class Constants {
     }
 
     public class SmsConstants{
-        public static final String SMS_TOKEN = "";
+        private static final String FILE_PATH = "D:\\TOKEN.txt";
+        public static String SMS_TOKEN = "";
+        static {
+            try (InputStream inputStream = new FileInputStream(FILE_PATH)) {
+                byte[] fileData = inputStream.readAllBytes();
+                SMS_TOKEN = new String(fileData);
+            } catch (IOException e) {
+                System.out.println(e.getMessage() + " " + "Error to get sms token.");
+                //System.exit(1);
+            }
+            if (SMS_TOKEN == null){
+                System.out.println("Check ur file for sms token.");
+            }
+        }
         public static final String URL_SMS = "https://capi.inforu.co.il/api/v2/SMS/SendSms";
     }
 
