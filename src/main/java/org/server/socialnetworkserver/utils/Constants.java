@@ -24,7 +24,7 @@ public class Constants {
 
     public class Errors{
         public static final String ERROR_1 = "Failed: please fill all filed.";
-        public static final String ERROR_2 = "Failed: This username is valid, please choose a another name.";
+        public static final String ERROR_2 = "Failed: This username is exist, please choose a another name.";
         public static final String ERROR_3 = "Failed: The password must be 6 characters long," +
                 " contain at least one special character -> " + HelpMethodConstants.SPECIAL_CHAR +
             ", and at least one letter.";
