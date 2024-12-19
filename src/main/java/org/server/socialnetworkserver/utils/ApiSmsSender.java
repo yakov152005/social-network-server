@@ -17,7 +17,7 @@ public class ApiSmsSender {
     public static void main(String[] args) {
         String verify = generatorCode();
         System.out.println( sendSms(verify,
-                List.of("0526650754")));
+                List.of("0501111111")));
     }
 
     public static boolean sendSms (String text, List<String> phones) {

@@ -67,6 +67,14 @@
 			<version>1.6.2</version>
 		</dependency>
 
+		<!-- תלויות לקרוא מהקובץ .env -->
+		<dependency>
+			<groupId>me.paulschwarz</groupId>
+			<artifactId>spring-dotenv</artifactId>
+			<version>3.0.0</version>
+		</dependency>
+
+
 	</dependencies>
 
 	<build>

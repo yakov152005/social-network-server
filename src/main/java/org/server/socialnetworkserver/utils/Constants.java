@@ -1,18 +1,15 @@
 package org.server.socialnetworkserver.utils;
-
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+
 
 public class Constants {
 
     public class DataBase{
         public static final String DB_HOST = "localhost";
         public static final String DB_USER = "root";
-        public static final String DB_PASSWORD = "Rtadsuk152005";
+        public static final String DB_PASSWORD = "";
         public static final String DB_NAME = "social_network_db";
 
     }
@@ -33,7 +30,6 @@ public class Constants {
                 SMS_TOKEN = new String(fileData);
             } catch (IOException e) {
                 System.out.println(e.getMessage() + " " + "Error to get sms token.");
-                //System.exit(1);
             }
             if (SMS_TOKEN == null){
                 System.out.println("Check ur file for sms token.");
