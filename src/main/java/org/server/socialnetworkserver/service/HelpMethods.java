@@ -1,10 +1,16 @@
 package org.server.socialnetworkserver.service;
 
+import jakarta.xml.bind.DatatypeConverter;
 import org.server.socialnetworkserver.repository.UserRepository;
 import org.server.socialnetworkserver.entitys.User;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import static org.server.socialnetworkserver.utils.Constants.EmailConstants.EMAILS_CONTAINS;
 import static org.server.socialnetworkserver.utils.Constants.Errors.*;
@@ -157,8 +163,21 @@ public class HelpMethods {
             return ERROR_7;
         }
 
-
-
         return null;
+    }
+
+    public static String generateSalt() {
+        return UUID.randomUUID().toString();
+    }
+
+    public static String hashPassword(String password, String salt) {
+        try {
+            String saltedPassword = password + salt;
+            return DatatypeConverter.printHexBinary(
+                    MessageDigest.getInstance("SHA-256").digest(saltedPassword.getBytes("UTF-8"))
+            );
+        } catch (NoSuchAlgorithmException | java.io.UnsupportedEncodingException e) {
+            throw new RuntimeException("Error hashing password", e);
+        }
     }
 }

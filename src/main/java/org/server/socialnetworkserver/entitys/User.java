@@ -12,8 +12,12 @@ public class User{
     private long id;
     @Column(nullable = false, unique = true)
     private String username;
-    @Column(nullable = false)
+    @Transient
     private String password;
+    @Column(nullable = false)
+    private String passwordHash;
+    @Column(nullable = false)
+    private String salt;
     @Column(nullable = false)
     private String phoneNumber;
     @Column(nullable = false)
@@ -23,10 +27,12 @@ public class User{
     @OneToMany(mappedBy = "follower")
     private List<Follow> followers;
 
-    public User(long id, String username, String password, String phoneNumber, String email, int age, List<Follow> followers) {
+    public User(long id, String username, String password, String passwordHash, String salt, String phoneNumber, String email, int age, List<Follow> followers) {
         this.id = id;
         this.username = username;
         this.password = password;
+        this.passwordHash = passwordHash;
+        this.salt = salt;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.age = age;
@@ -59,6 +65,22 @@ public class User{
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public String getSalt() {
+        return salt;
+    }
+
+    public void setSalt(String salt) {
+        this.salt = salt;
     }
 
     public String getPhoneNumber() {
@@ -99,6 +121,8 @@ public class User{
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", password='" + password + '\'' +
+                ", passwordHash='" + passwordHash + '\'' +
+                ", salt='" + salt + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
                 ", age=" + age +

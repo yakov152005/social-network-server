@@ -3,7 +3,9 @@ import org.server.socialnetworkserver.entitys.Response;
 import org.server.socialnetworkserver.repository.UserRepository;
 import org.server.socialnetworkserver.entitys.User;
 import org.server.socialnetworkserver.utils.ApiSmsSender;
+import org.server.socialnetworkserver.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -39,6 +41,13 @@ public class UserController {
                 "Email: " + user.getEmail();
         System.out.println(userDetails);
         System.out.println(sendEmail(user.getEmail(), "Details", userDetails));
+
+        String salt = generateSalt();
+        String hashedPassword = hashPassword(user.getPassword(), salt);
+
+
+        user.setSalt(salt);
+        user.setPasswordHash(hashedPassword);
         userRepository.save(user);
 
         return new Response(true, "Success: user " + user.getUsername() + " created.", errorCode);
@@ -46,43 +55,77 @@ public class UserController {
 
 
     @PostMapping("/loginUser")
-    public boolean loginUser(@RequestBody Map<String, String> loginDetails) {
+    public Map<String, String> loginUser(@RequestBody Map<String, String> loginDetails) {
         String username = loginDetails.get("username");
         String password = loginDetails.get("password");
 
         if (username != null && password != null) {
-            for (User currentUser : userRepository.findAll()) {
-                if (username.equals(currentUser.getUsername()) && password.equals(currentUser.getPassword())) {
+            User currentUser = userRepository.findByUsername(username);
+            if (currentUser != null) {
+
+                String hashedPassword = hashPassword(password, currentUser.getSalt());
+                if (hashedPassword.equals(currentUser.getPasswordHash())) {
                     String verificationCode = generatorCode();
                     verificationCodes.put(username, verificationCode);
 
                     ApiSmsSender.sendSms("Your verification code: " + verificationCode,
                             List.of(currentUser.getPhoneNumber()));
-                    return true;
+
+                    Map<String, String> response = new HashMap<>();
+                    response.put("message", "Verification code sent");
+                    response.put("username", username);
+                    return response;
                 }
             }
         }
-        return false;
+        throw new RuntimeException("Invalid login details");
     }
 
+
     @PostMapping("/verifyCode")
-    public boolean verifyCode(@RequestBody Map<String, String> verificationDetails) {
+    public Map<String, String> verifyCode(@RequestBody Map<String, String> verificationDetails) {
         String username = verificationDetails.get("username");
         String code = verificationDetails.get("code");
 
         if (username != null && code != null && verificationCodes.containsKey(username)) {
             if (verificationCodes.get(username).equals(code)) {
                 verificationCodes.remove(username);
-                return true;
+                String token = JwtUtils.generateToken(username);
+                Map<String, String> response = new HashMap<>();
+                response.put("token", token);
+                response.put("message", "Login successful");
+                return response;
             }
         }
-        return false;
+        throw new RuntimeException("Invalid verification code");
     }
+
+    @GetMapping("/getUserDetails")
+    public Map<String, Object> getUserDetails(@RequestHeader("Authorization") String token) {
+        Map<String, Object> response = new HashMap<>();
+
+        if (token == null || token.isEmpty()) {
+            response.put("error", "Token is missing");
+            return response;
+        }
+
+        String cleanToken = token.replace("Bearer ", "");
+        if (!JwtUtils.isTokenValid(cleanToken)) {
+            response.put("error", "Invalid token");
+            return response;
+        }
+        String username = JwtUtils.extractUsername(cleanToken);
+        response.put("username", username);
+
+        return response;
+    }
+
 
     @GetMapping("/getAllUserName")
     public List<String> getAllUserName(){
         List<String> list = userRepository.findAll().stream()
                 .map(User::getUsername).toList();
+        System.out.println(list);
         return list;
     }
 
