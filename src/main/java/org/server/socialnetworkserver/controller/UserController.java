@@ -27,7 +27,7 @@ public class UserController {
         this.userRepository = userRepository;
     }
 
-    @PostMapping("/addUser")
+    @PostMapping("/add-user")
     public Response addUser(@RequestBody User user) {
         final String error = checkAllFiled(user, userRepository);
         int errorCode = errorCodeCheck(error);
@@ -54,7 +54,7 @@ public class UserController {
     }
 
 
-    @PostMapping("/loginUser")
+    @PostMapping("/login-user")
     public Map<String, String> loginUser(@RequestBody Map<String, String> loginDetails) {
         String username = loginDetails.get("username");
         String password = loginDetails.get("password");
@@ -82,7 +82,7 @@ public class UserController {
     }
 
 
-    @PostMapping("/verifyCode")
+    @PostMapping("/verify-code")
     public Map<String, String> verifyCode(@RequestBody Map<String, String> verificationDetails) {
         String username = verificationDetails.get("username");
         String code = verificationDetails.get("code");
@@ -100,7 +100,7 @@ public class UserController {
         throw new RuntimeException("Invalid verification code");
     }
 
-    @GetMapping("/getUserDetails")
+    @GetMapping("/get-user-details")
     public Map<String, Object> getUserDetails(@RequestHeader("Authorization") String token) {
         Map<String, Object> response = new HashMap<>();
 
@@ -121,13 +121,41 @@ public class UserController {
     }
 
 
-    @GetMapping("/getAllUserName")
-    public List<String> getAllUserName(){
+    @GetMapping("/get-all-user-names")
+    public List<String> getAllUserNames(){
         List<String> list = userRepository.findAll().stream()
                 .map(User::getUsername).toList();
         System.out.println(list);
         return list;
     }
+
+    @GetMapping("/reset-password/{email}")
+    public Response resetPasswordForThisUser(@PathVariable String email) {
+        User user = userRepository.findAll()
+                .stream()
+                .filter(u -> u.getEmail().equalsIgnoreCase(email))
+                .findFirst()
+                .orElse(null);
+
+        if (user == null) {
+            return new Response(false, "This email does not exist", ERROR_EMAIL);
+        }
+
+        String newPassword = generatorPassword();
+        String salt = generateSalt();
+        String hashedPassword = hashPassword(newPassword, salt);
+
+        user.setSalt(salt);
+        user.setPasswordHash(hashedPassword);
+        userRepository.save(user);
+
+        String title = "Reset Password";
+        String passwordDetails = "Your new password: " + newPassword + "\n";
+        sendEmail(user.getEmail(), title, passwordDetails);
+
+        return new Response(true, "The password was sent to your email. Check it.", NO_ERROR);
+    }
+
 
 
 

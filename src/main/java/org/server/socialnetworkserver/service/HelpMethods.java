@@ -43,6 +43,17 @@ public class HelpMethods {
         return verifyCode;
     }
 
+    public static String generatorPassword(){
+        String letters = LETTERS;
+        String specialChar = SPECIAL_CHAR;
+        int randomLetters = r.nextInt(letters.length() -1);
+        int randomSpecialChar = r.nextInt(specialChar.length() -1);
+        String verifyCode  = String.valueOf(letters.charAt(randomLetters));
+        verifyCode += String.valueOf(specialChar.charAt(randomSpecialChar));
+        verifyCode += String.format("%05d",r.nextInt(10000));
+        return verifyCode;
+    }
+
     public static boolean checkIfNotNullData(String username,String password,String phoneNumber,String email,int Age){
         if (username == null || username.isEmpty() ||
                 password== null || password.isEmpty() ||

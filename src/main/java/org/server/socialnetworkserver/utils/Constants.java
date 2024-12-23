@@ -24,7 +24,6 @@ public class Constants {
     }
 
     public class SmsConstants{
-        private static final String FILE_PATH = "D:\\TOKEN.txt";
         static Dotenv dotenv = Dotenv.load();
         public static String SMS_TOKEN =dotenv.get("SMS_TOKEN");
         public static final String URL_SMS = "https://capi.inforu.co.il/api/v2/SMS/SendSms";

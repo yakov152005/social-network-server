@@ -1,5 +1,6 @@
 package org.server.socialnetworkserver.entitys;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
