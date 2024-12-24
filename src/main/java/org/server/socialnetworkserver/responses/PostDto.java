@@ -4,12 +4,14 @@ import java.util.Date;
 
 public class PostDto {
     private String username;
+    private String profilePicture;
     private String content;
     private String imageUrl;
     private Date date;
 
-    public PostDto(String username, String content, String imageUrl, Date date) {
+    public PostDto(String username, String profilePicture,String content, String imageUrl, Date date) {
         this.username = username;
+        this.profilePicture = profilePicture;
         this.content = content;
         this.imageUrl = imageUrl;
         this.date = date;
@@ -44,6 +46,18 @@ public class PostDto {
     }
 
     public void setData(Date date) {
+        this.date = date;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
+    }
+
+    public void setDate(Date date) {
         this.date = date;
     }
 

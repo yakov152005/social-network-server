@@ -190,7 +190,7 @@ public class UserController {
         }
 
         List<PostDto> postDtos = allPostsByUser.stream()
-                .map(post -> new PostDto(post.getUser().getUsername(), post.getContent(), post.getImageUrl(),post.getDate()))
+                .map(post -> new PostDto(post.getUser().getUsername(),post.getUser().getProfilePicture(), post.getContent(), post.getImageUrl(),post.getDate()))
                 .toList();
 
         return new PostResponse(true, "All posts by user.", postDtos);
@@ -211,12 +211,36 @@ public class UserController {
         List<PostDto> postDtos = homeFeedPosts.stream()
                 .map(post -> new PostDto(
                         post.getUser().getUsername(),
+                        post.getUser().getProfilePicture(),
                         post.getContent(),
                         post.getImageUrl(),
                         post.getDate()))
                 .toList();
 
         return new PostResponse(true,"All posts home feed.",postDtos);
+    }
+
+    @PostMapping("/add-profile-pic")
+    public BasicResponse addProfilePicture(@RequestBody Map<String,String> addPicProfile){
+        String username = addPicProfile.get("username");
+        String newPicture = addPicProfile.get("profilePicture");
+        User user = userRepository.findByUsername(username);
+        if (user != null){
+            user.setProfilePicture(newPicture);
+            userRepository.save(user);
+            return new BasicResponse(true,"Add profile pic success.");
+        }
+
+        return new BasicResponse(false,"Add profile pic NOT success.");
+    }
+
+    @GetMapping("/get-profile-pic/{username}")
+    public ProfilePicResponse getProfilePictureByUsername(@PathVariable String username){
+        User user = userRepository.findByUsername(username);
+        if (user != null){
+            return new ProfilePicResponse(true,"Success send profile pic",user.getProfilePicture());
+        }
+        return new ProfilePicResponse(false,"Not success",null);
     }
 
 
