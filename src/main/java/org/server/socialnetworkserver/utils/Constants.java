@@ -8,24 +8,26 @@ import java.io.InputStream;
 
 public class Constants {
 
+    public static Dotenv dotenv = Dotenv.load();
+
     public class DataBase{
         public static final String DB_HOST = "localhost";
-        public static final String DB_USER = "root";
-        public static final String DB_PASSWORD = "";
-        public static final String DB_NAME = "social_network_db";
+        public static final String DB_USER = dotenv.get("DB_USER");
+        public static final String DB_PASSWORD = dotenv.get("DB_PASSWORD");
+        public static final String DB_NAME = dotenv.get("DB_NAME");
 
     }
 
     public class EmailConstants{
-        public static final String SENDER_EMAIL = "servicenetwork62@gmail.com"; 
-        public static final String SENDER_PASSWORD = "sinh araw dtpo vqoe";
+        public static final String SENDER_EMAIL = dotenv.get("SENDER_EMAIL");
+        public static final String SENDER_PASSWORD = dotenv.get("SENDER_PASSWORD");
         public static final String[] EMAILS_CONTAINS = {"walla.co.il", "walla.com", "gmail.com", "gmail.co.il", "edu.aac.ac.il"};
 
     }
 
     public class SmsConstants{
-        static Dotenv dotenv = Dotenv.load();
-        public static String SMS_TOKEN =dotenv.get("SMS_TOKEN");
+        public static final String SMS_SENDER = "NETWORKAPI";
+        public static final String SMS_TOKEN = dotenv.get("SMS_TOKEN");
         public static final String URL_SMS = "https://capi.inforu.co.il/api/v2/SMS/SendSms";
     }
 

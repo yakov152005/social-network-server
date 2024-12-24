@@ -1,16 +1,10 @@
 package org.server.socialnetworkserver.service;
 
-import jakarta.xml.bind.DatatypeConverter;
 import org.server.socialnetworkserver.repository.UserRepository;
 import org.server.socialnetworkserver.entitys.User;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
-
 import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+
 
 import static org.server.socialnetworkserver.utils.Constants.EmailConstants.EMAILS_CONTAINS;
 import static org.server.socialnetworkserver.utils.Constants.Errors.*;
@@ -18,41 +12,7 @@ import static org.server.socialnetworkserver.utils.Constants.HelpMethodConstants
 
 public class HelpMethods {
 
-    public static Random r = new Random();
 
-    public static int errorCodeCheck(String errorCheck){
-        if (errorCheck != null) {
-            if (errorCheck.contains("username")) {
-                return ERROR_USER;
-            } else if (errorCheck.contains("password")) {
-                return ERROR_PASSWORD;
-            } else if (errorCheck.contains("Phone")) {
-                return ERROR_PHONE;
-            } else if (errorCheck.contains("email")) {
-                return ERROR_EMAIL;
-            }
-        }
-        return NO_ERROR;
-    }
-
-    public static String generatorCode(){
-        String letters = LETTERS;
-        int randomLetters = r.nextInt(letters.length() -1);
-        String verifyCode  = String.valueOf(letters.charAt(randomLetters));
-        verifyCode += String.format("%04d",r.nextInt(1000));
-        return verifyCode;
-    }
-
-    public static String generatorPassword(){
-        String letters = LETTERS;
-        String specialChar = SPECIAL_CHAR;
-        int randomLetters = r.nextInt(letters.length() -1);
-        int randomSpecialChar = r.nextInt(specialChar.length() -1);
-        String verifyCode  = String.valueOf(letters.charAt(randomLetters));
-        verifyCode += String.valueOf(specialChar.charAt(randomSpecialChar));
-        verifyCode += String.format("%05d",r.nextInt(10000));
-        return verifyCode;
-    }
 
     public static boolean checkIfNotNullData(String username,String password,String phoneNumber,String email,int Age){
         if (username == null || username.isEmpty() ||
@@ -177,18 +137,19 @@ public class HelpMethods {
         return null;
     }
 
-    public static String generateSalt() {
-        return UUID.randomUUID().toString();
+    public static int errorCodeCheck(String errorCheck){
+        if (errorCheck != null) {
+            if (errorCheck.contains("username")) {
+                return ERROR_USER;
+            } else if (errorCheck.contains("password")) {
+                return ERROR_PASSWORD;
+            } else if (errorCheck.contains("Phone")) {
+                return ERROR_PHONE;
+            } else if (errorCheck.contains("email")) {
+                return ERROR_EMAIL;
+            }
+        }
+        return NO_ERROR;
     }
 
-    public static String hashPassword(String password, String salt) {
-        try {
-            String saltedPassword = password + salt;
-            return DatatypeConverter.printHexBinary(
-                    MessageDigest.getInstance("SHA-256").digest(saltedPassword.getBytes("UTF-8"))
-            );
-        } catch (NoSuchAlgorithmException | java.io.UnsupportedEncodingException e) {
-            throw new RuntimeException("Error hashing password", e);
-        }
-    }
 }

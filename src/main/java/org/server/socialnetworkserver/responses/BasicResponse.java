@@ -1,17 +1,16 @@
-package org.server.socialnetworkserver.entitys;
+package org.server.socialnetworkserver.responses;
 
-public class Response {
+public class BasicResponse {
     private boolean success;
     private String error;
-    private int errorCode;
 
-    public Response(boolean success, String error, int errorCode) {
+
+    public BasicResponse(boolean success, String error) {
         this.success = success;
         this.error = error;
-        this.errorCode = errorCode;
     }
 
-    public Response(){
+    public BasicResponse(){
 
     }
 
@@ -31,20 +30,11 @@ public class Response {
         this.error = error;
     }
 
-    public int getErrorCode() {
-        return errorCode;
-    }
-
-    public void setErrorCode(int errorCode) {
-        this.errorCode = errorCode;
-    }
-
     @Override
     public String toString() {
-        return "Response{" +
+        return "BaseResponse{" +
                 "success=" + success +
                 ", error='" + error + '\'' +
-                ", errorCode=" + errorCode +
                 '}';
     }
 }

@@ -25,11 +25,20 @@ public class User{
     private String email;
     @Column(nullable = false)
     private int age;
-    @OneToMany(mappedBy = "follower")
+
+    /**
+     * עוקבים אחרי
+     */
+    @OneToMany(mappedBy = "following", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Follow> followers;
 
-    public User(long id, String username, String password, String passwordHash, String salt, String phoneNumber, String email, int age, List<Follow> followers) {
-        this.id = id;
+    /**
+     * המשתמש עוקב
+     */
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Follow> following;
+
+    public User(String username, String password, String passwordHash, String salt, String phoneNumber, String email, int age, List<Follow> followers, List<Follow> following) {
         this.username = username;
         this.password = password;
         this.passwordHash = passwordHash;
@@ -38,6 +47,7 @@ public class User{
         this.email = email;
         this.age = age;
         this.followers = followers;
+        this.following = following;
     }
 
     public User(){
@@ -116,20 +126,24 @@ public class User{
         this.followers = followers;
     }
 
+    public List<Follow> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(List<Follow> following) {
+        this.following = following;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", passwordHash='" + passwordHash + '\'' +
-                ", salt='" + salt + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
                 ", age=" + age +
-                ", followers=" + followers +
+                ", followersCount=" + (followers != null ? followers.size() : 0) +
+                ", followingCount=" + (following != null ? following.size() : 0) +
                 '}';
     }
 }
-
 

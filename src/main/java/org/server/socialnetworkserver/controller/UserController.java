@@ -1,11 +1,12 @@
 package org.server.socialnetworkserver.controller;
-import org.server.socialnetworkserver.entitys.Response;
+import org.server.socialnetworkserver.responses.BasicResponse;
+import org.server.socialnetworkserver.responses.LoginResponse;
+import org.server.socialnetworkserver.responses.ValidationResponse;
 import org.server.socialnetworkserver.repository.UserRepository;
 import org.server.socialnetworkserver.entitys.User;
 import org.server.socialnetworkserver.utils.ApiSmsSender;
 import org.server.socialnetworkserver.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.Map;
 import static org.server.socialnetworkserver.service.HelpMethods.*;
 import static org.server.socialnetworkserver.utils.ApiEmailProcessor.sendEmail;
 import static org.server.socialnetworkserver.utils.Constants.Errors.*;
+import static org.server.socialnetworkserver.utils.GeneratorUtils.*;
 
 @RestController
 @RequestMapping("/users")
@@ -28,11 +30,11 @@ public class UserController {
     }
 
     @PostMapping("/add-user")
-    public Response addUser(@RequestBody User user) {
+    public ValidationResponse addUser(@RequestBody User user) {
         final String error = checkAllFiled(user, userRepository);
         int errorCode = errorCodeCheck(error);
         if (errorCode != NO_ERROR ) {
-            return new Response(false, error,errorCode);
+            return new ValidationResponse(false, error,errorCode);
         }
 
         String userDetails = "Username: " + user.getUsername() + "\n" +
@@ -50,12 +52,12 @@ public class UserController {
         user.setPasswordHash(hashedPassword);
         userRepository.save(user);
 
-        return new Response(true, "Success: user " + user.getUsername() + " created.", errorCode);
+        return new ValidationResponse(true, "Success: user " + user.getUsername() + " created.", errorCode);
     }
 
 
     @PostMapping("/login-user")
-    public Map<String, String> loginUser(@RequestBody Map<String, String> loginDetails) {
+    public LoginResponse loginUser(@RequestBody Map<String, String> loginDetails) {
         String username = loginDetails.get("username");
         String password = loginDetails.get("password");
 
@@ -71,14 +73,11 @@ public class UserController {
                     ApiSmsSender.sendSms("Your verification code: " + verificationCode,
                             List.of(currentUser.getPhoneNumber()));
 
-                    Map<String, String> response = new HashMap<>();
-                    response.put("message", "Verification code sent");
-                    response.put("username", username);
-                    return response;
+                    return new LoginResponse(true,"Verification code sent",username);
                 }
             }
         }
-        throw new RuntimeException("Invalid login details");
+        return new LoginResponse(false,"The username or password is incorrect.",null);
     }
 
 
@@ -130,7 +129,7 @@ public class UserController {
     }
 
     @GetMapping("/reset-password/{email}")
-    public Response resetPasswordForThisUser(@PathVariable String email) {
+    public BasicResponse resetPasswordForThisUser(@PathVariable String email) {
         User user = userRepository.findAll()
                 .stream()
                 .filter(u -> u.getEmail().equalsIgnoreCase(email))
@@ -138,7 +137,7 @@ public class UserController {
                 .orElse(null);
 
         if (user == null) {
-            return new Response(false, "This email does not exist", ERROR_EMAIL);
+            return new ValidationResponse(false, "This email does not exist", ERROR_EMAIL);
         }
 
         String newPassword = generatorPassword();
@@ -153,7 +152,7 @@ public class UserController {
         String passwordDetails = "Your new password: " + newPassword + "\n";
         sendEmail(user.getEmail(), title, passwordDetails);
 
-        return new Response(true, "The password was sent to your email. Check it.", NO_ERROR);
+        return new BasicResponse(true, "The password was sent to your email. Check it.");
     }
 
 
