@@ -1,7 +1,7 @@
 package org.server.socialnetworkserver.entitys;
 
 import jakarta.persistence.*;
-import java.util.List;
+
 
 @Entity
 @Table(name = "PROFILE")

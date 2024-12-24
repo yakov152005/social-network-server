@@ -1,6 +1,4 @@
 package org.server.socialnetworkserver.entitys;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -38,7 +36,14 @@ public class User{
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Follow> following;
 
-    public User(String username, String password, String passwordHash, String salt, String phoneNumber, String email, int age, List<Follow> followers, List<Follow> following) {
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Profile profile;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Post> posts;
+
+
+    public User(String username, String password, String passwordHash, String salt, String phoneNumber, String email, int age, List<Follow> followers, List<Follow> following, Profile profile,List<Post> posts) {
         this.username = username;
         this.password = password;
         this.passwordHash = passwordHash;
@@ -48,6 +53,8 @@ public class User{
         this.age = age;
         this.followers = followers;
         this.following = following;
+        this.profile = profile;
+        this.posts = posts;
     }
 
     public User(){
@@ -132,6 +139,22 @@ public class User{
 
     public void setFollowing(List<Follow> following) {
         this.following = following;
+    }
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
     }
 
     @Override

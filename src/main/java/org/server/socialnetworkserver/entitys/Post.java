@@ -1,6 +1,9 @@
 package org.server.socialnetworkserver.entitys;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.util.Date;
 
 @Entity
 @Table(name = "POST")
@@ -13,12 +16,15 @@ public class Post {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = true)
+    @Column(nullable = true, length = 2048)
     private String imageUrl;
+
+    @Column(nullable = false, updatable = false)
+    @CreationTimestamp
+    private Date date;
 
     public Post() {}
 
@@ -59,5 +65,13 @@ public class Post {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }

@@ -1,7 +1,7 @@
 package org.server.socialnetworkserver.controller;
-import org.server.socialnetworkserver.responses.BasicResponse;
-import org.server.socialnetworkserver.responses.LoginResponse;
-import org.server.socialnetworkserver.responses.ValidationResponse;
+import org.server.socialnetworkserver.entitys.Post;
+import org.server.socialnetworkserver.repository.PostRepository;
+import org.server.socialnetworkserver.responses.*;
 import org.server.socialnetworkserver.repository.UserRepository;
 import org.server.socialnetworkserver.entitys.User;
 import org.server.socialnetworkserver.utils.ApiSmsSender;
@@ -18,15 +18,17 @@ import static org.server.socialnetworkserver.utils.Constants.Errors.*;
 import static org.server.socialnetworkserver.utils.GeneratorUtils.*;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/social-network")
 public class UserController {
 
     private UserRepository userRepository;
+    private PostRepository postRepository;
     private final Map<String, String> verificationCodes = new HashMap<>();
 
     @Autowired
-    public UserController(UserRepository userRepository){
+    public UserController(UserRepository userRepository, PostRepository postRepository){
         this.userRepository = userRepository;
+        this.postRepository = postRepository;
     }
 
     @PostMapping("/add-user")
@@ -46,7 +48,6 @@ public class UserController {
 
         String salt = generateSalt();
         String hashedPassword = hashPassword(user.getPassword(), salt);
-
 
         user.setSalt(salt);
         user.setPasswordHash(hashedPassword);
@@ -73,8 +74,10 @@ public class UserController {
                     ApiSmsSender.sendSms("Your verification code: " + verificationCode,
                             List.of(currentUser.getPhoneNumber()));
 
-                    return new LoginResponse(true,"Verification code sent",username);
+                    return new LoginResponse(true,"SMS sent with verification code.",username);
                 }
+            }else {
+                return new LoginResponse(false,"This username is not exist!",null);
             }
         }
         return new LoginResponse(false,"The username or password is incorrect.",null);
@@ -122,19 +125,12 @@ public class UserController {
 
     @GetMapping("/get-all-user-names")
     public List<String> getAllUserNames(){
-        List<String> list = userRepository.findAll().stream()
-                .map(User::getUsername).toList();
-        System.out.println(list);
-        return list;
+        return userRepository.findAllUsernames();
     }
 
     @GetMapping("/reset-password/{email}")
     public BasicResponse resetPasswordForThisUser(@PathVariable String email) {
-        User user = userRepository.findAll()
-                .stream()
-                .filter(u -> u.getEmail().equalsIgnoreCase(email))
-                .findFirst()
-                .orElse(null);
+        User user = userRepository.findByEmailIgnoreCase(email);
 
         if (user == null) {
             return new ValidationResponse(false, "This email does not exist", ERROR_EMAIL);
@@ -155,7 +151,73 @@ public class UserController {
         return new BasicResponse(true, "The password was sent to your email. Check it.");
     }
 
+    /**
+     * posts
+     * @param username
+     * @param postDetails
+     * @return add post
+     */
+    @PostMapping("/add-post/{username}")
+    public BasicResponse addPost(@PathVariable String username, @RequestBody Map<String,String> postDetails){
+        String content = postDetails.get("content");
+        String imageUrl = postDetails.get("imageUrl");
 
+        if (content == null || content.isEmpty()){
+            return new BasicResponse(false,"Content is Empty.");
+        }
+
+        User user  = userRepository.findByUsername(username);
+        if (user == null){
+            return new BasicResponse(false,"User not Found.");
+        }
+
+        Post newPost = new Post(user,content,imageUrl);
+        postRepository.save(newPost);
+
+        return new BasicResponse(true, "Post added successfully.");
+    }
+
+    @GetMapping("/get-post-by-username/{username}")
+    public PostResponse getPostByUserName(@PathVariable String username){
+        User user = userRepository.findByUsername(username);
+        if (user == null){
+            return new PostResponse(false,"User not found",null);
+        }
+
+        List<Post> allPostsByUser = postRepository.findPostsByUsername(username);
+        if (allPostsByUser.isEmpty()){
+            return new PostResponse(false, "No posts found for the user.", null);
+        }
+
+        List<PostDto> postDtos = allPostsByUser.stream()
+                .map(post -> new PostDto(post.getUser().getUsername(), post.getContent(), post.getImageUrl(),post.getDate()))
+                .toList();
+
+        return new PostResponse(true, "All posts by user.", postDtos);
+    }
+
+    @GetMapping("/home-feed-post/{username}")
+    public PostResponse getHomeFeedPost(@PathVariable String username){
+        User user = userRepository.findByUsername(username);
+        if (user == null){
+            return new PostResponse(false,"User not found.",null);
+        }
+
+        List<Post> homeFeedPosts = postRepository.findHomeFeedPosts(username);
+        if (homeFeedPosts.isEmpty()) {
+            return new PostResponse(false, "No posts found for the user.", null);
+        }
+
+        List<PostDto> postDtos = homeFeedPosts.stream()
+                .map(post -> new PostDto(
+                        post.getUser().getUsername(),
+                        post.getContent(),
+                        post.getImageUrl(),
+                        post.getDate()))
+                .toList();
+
+        return new PostResponse(true,"All posts home feed.",postDtos);
+    }
 
 
 

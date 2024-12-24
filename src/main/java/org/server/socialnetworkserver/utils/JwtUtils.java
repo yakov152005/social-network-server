@@ -37,7 +37,8 @@ public class JwtUtils {
                     .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("Token is not valid. because you restart the springboot and token is removed. " +
+                    "login again!");
             return false;
         }
     }
