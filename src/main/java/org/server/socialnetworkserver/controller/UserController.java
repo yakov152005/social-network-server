@@ -83,6 +83,36 @@ public class UserController {
         return new LoginResponse(false,"The username or password is incorrect.",null);
     }
 
+    @PostMapping("/change-password")
+    public BasicResponse changePassword(@RequestBody Map<String,String> changePasswordDetails){
+        String username = changePasswordDetails.get("username");
+        String currentPassword = changePasswordDetails.get("currentPassword");
+        String newPassword = changePasswordDetails.get("newPassword");
+
+        User user = userRepository.findByUsername(username);
+        if (user != null ){
+
+            String storedSalt = user.getSalt();
+            String currentPasswordHash = hashPassword(currentPassword,storedSalt);
+
+            String storedPasswordHash = user.getPasswordHash();
+            if (storedPasswordHash.equals(currentPasswordHash)) {
+
+                String newSalt = generateSalt();
+                String hashedPassword = hashPassword(newPassword, newSalt);
+
+                user.setSalt(newSalt);
+                user.setPasswordHash(hashedPassword);
+                userRepository.save(user);
+
+                return new BasicResponse(true, "The password is changed.");
+            }else {
+                return new BasicResponse(false,"The current password you entered is incorrect.");
+            }
+        }
+        return new BasicResponse(false,"The password not change.");
+    }
+
 
     @PostMapping("/verify-code")
     public Map<String, String> verifyCode(@RequestBody Map<String, String> verificationDetails) {
@@ -242,6 +272,7 @@ public class UserController {
         }
         return new ProfilePicResponse(false,"Not success",null);
     }
+
 
 
 
