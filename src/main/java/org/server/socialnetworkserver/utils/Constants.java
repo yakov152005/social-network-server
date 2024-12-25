@@ -34,24 +34,27 @@ public class Constants {
     public class Errors{
         public static final String ERROR_1 = "Failed: please fill all filed.";
         public static final String ERROR_2 = "Failed: This username is exist, please choose a another name.";
-        public static final String ERROR_3 = "Failed: The password must be 6 characters long," +
+        public static final String ERROR_3 = "Failed: The password must be 8 characters long," +
                 " contain at least one special character -> " + HelpMethodConstants.SPECIAL_CHAR +
             ", and at least one letter.";
-        public static final String ERROR_4 = "Failed: Phone number must start with 05 and be exactly 10 digits long.";
-        public static final String ERROR_5 = "Failed: This Phone number is exist, please choose another phone number.";
-        public static final String ERROR_6 = "Failed: This email is exist, please choose another email.";
-        public static final String ERROR_7 = "Failed: The email must be in the style 'example@yourmail.com OR .co.il' ";
+        public static final String ERROR_4 = "Failed: The password confirm  you entered does not match the original password.' ";
+        public static final String ERROR_5 = "Failed: Phone number must start with 05 and be exactly 10 digits long.";
+        public static final String ERROR_6 = "Failed: This Phone number is exist, please choose another phone number.";
+        public static final String ERROR_7 = "Failed: This email is exist, please choose another email.";
+        public static final String ERROR_8 = "Failed: The email must be in the style 'example@yourmail.com OR .co.il' ";
 
         public static final int NO_ERROR = 1;
         public static final int ERROR_USER = 2;
         public static final int ERROR_PASSWORD = 3;
-        public static final int ERROR_PHONE = 4;
-        public static final int ERROR_EMAIL = 5;
+        public static final int ERROR_CONFIRM_PASSWORD = 4;
+        public static final int ERROR_PHONE = 5;
+        public static final int ERROR_EMAIL = 6;
     }
 
     public class HelpMethodConstants{
-        public static final String SPECIAL_CHAR = "!@#$%^&*";
+        public static final String SPECIAL_CHAR = "!@#$%^&*()-+=_";
         public static final String LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        public static final int LENGTH_PASSWORD = 8;
         public static final int LENGTH_PHONE = 10;
         public static final String START_WITH_PHONE = "05";
     }

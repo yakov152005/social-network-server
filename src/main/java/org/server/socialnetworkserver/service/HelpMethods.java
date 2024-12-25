@@ -14,9 +14,10 @@ public class HelpMethods {
 
 
 
-    public static boolean checkIfNotNullData(String username,String password,String phoneNumber,String email,int Age){
+    public static boolean checkIfNotNullData(String username,String password,String passwordConfirm,String phoneNumber,String email,int Age){
         if (username == null || username.isEmpty() ||
                 password== null || password.isEmpty() ||
+                passwordConfirm == null || passwordConfirm.isEmpty() ||
                 phoneNumber == null || phoneNumber.isEmpty() ||
                 email == null || email.isEmpty() ||
                 Age <= 0){
@@ -28,6 +29,7 @@ public class HelpMethods {
     public static boolean checkIfUserNameValid(String username, List<String> user){
         String currentUser = user.stream().filter(current ->  current.equals(username)).findFirst().orElse(null);
         if (currentUser!= null){
+            System.out.println("Current " + currentUser + " user " + username);
             if (currentUser.equals(username)){
                 return true;
             }
@@ -38,7 +40,7 @@ public class HelpMethods {
     public static boolean checkPassword(String password){
         boolean oneLatterOrMore = oneCharOrMore(password,LETTERS);
         boolean oneSpecialCharOrMore = oneCharOrMore(password,SPECIAL_CHAR);
-        return password.length() > 6 && oneLatterOrMore && oneSpecialCharOrMore;
+        return password.length() >= LENGTH_PASSWORD && oneLatterOrMore && oneSpecialCharOrMore;
     }
 
     public static boolean oneCharOrMore(String password,String forCheck){
@@ -104,8 +106,13 @@ public class HelpMethods {
         return false;
     }
 
+    private static boolean confirmPasswordEquals(String password, String passwordConfirm) {
+        return password.equals(passwordConfirm);
+    }
+
+
     public static String checkAllFiled(User user, UserRepository userRepository){
-        if (checkIfNotNullData(user.getUsername(),user.getPassword(), user.getPhoneNumber(),user.getEmail(),user.getAge())){
+        if (checkIfNotNullData(user.getUsername(),user.getPassword(),user.getPasswordConfirm(), user.getPhoneNumber(),user.getEmail(),user.getAge())){
             return ERROR_1;
         }
 
@@ -117,22 +124,25 @@ public class HelpMethods {
         if (!checkPassword(user.getPassword())){
             return ERROR_3;
         }
-
-        if (!isValidPhoneNumber(user.getPhoneNumber())){
+        if (!confirmPasswordEquals(user.getPassword(),user.getPasswordConfirm())){
             return ERROR_4;
         }
-
-        if (!checkIfSamePhoneNumber(user,userRepository)){
+        if (!isValidPhoneNumber(user.getPhoneNumber())){
             return ERROR_5;
         }
 
-        if (checkIfEmailExist(user.getEmail(),userRepository)){
+        if (!checkIfSamePhoneNumber(user,userRepository)){
             return ERROR_6;
         }
 
-        if (!checkEmailValid(user.getEmail())){
+        if (checkIfEmailExist(user.getEmail(),userRepository)){
             return ERROR_7;
         }
+
+        if (!checkEmailValid(user.getEmail())){
+            return ERROR_8;
+        }
+
 
         return null;
     }
@@ -141,8 +151,10 @@ public class HelpMethods {
         if (errorCheck != null) {
             if (errorCheck.contains("username")) {
                 return ERROR_USER;
-            } else if (errorCheck.contains("password")) {
+            } else if (errorCheck.contains("password") && !errorCheck.contains("confirm")) {
                 return ERROR_PASSWORD;
+            } else if (errorCheck.contains("confirm") && errorCheck.contains("password")) {
+                return ERROR_CONFIRM_PASSWORD;
             } else if (errorCheck.contains("Phone")) {
                 return ERROR_PHONE;
             } else if (errorCheck.contains("email")) {

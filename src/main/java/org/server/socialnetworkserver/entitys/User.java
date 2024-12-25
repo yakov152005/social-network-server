@@ -13,6 +13,8 @@ public class User{
     private String username;
     @Transient
     private String password;
+    @Transient
+    private String passwordConfirm;
     @Column(nullable = false)
     private String passwordHash;
     @Column(nullable = false)
@@ -43,9 +45,10 @@ public class User{
     private List<Post> posts;
 
 
-    public User(String username, String password, String passwordHash, String salt, String phoneNumber, String email, int age, List<Follow> followers, List<Follow> following, String profile,List<Post> posts) {
+    public User(String username, String password, String passwordConfirm,String passwordHash, String salt, String phoneNumber, String email, int age, List<Follow> followers, List<Follow> following, String profile,List<Post> posts) {
         this.username = username;
         this.password = password;
+        this.passwordConfirm = passwordConfirm;
         this.passwordHash = passwordHash;
         this.salt = salt;
         this.phoneNumber = phoneNumber;
@@ -83,6 +86,14 @@ public class User{
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPasswordConfirm() {
+        return passwordConfirm;
+    }
+
+    public void setPasswordConfirm(String passwordConfirm) {
+        this.passwordConfirm = passwordConfirm;
     }
 
     public String getPasswordHash() {

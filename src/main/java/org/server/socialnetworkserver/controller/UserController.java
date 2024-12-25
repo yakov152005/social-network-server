@@ -33,22 +33,33 @@ public class UserController {
 
     @PostMapping("/add-user")
     public ValidationResponse addUser(@RequestBody User user) {
+        User newUser = userRepository.findByUsername(user.getUsername());
+
+        if (newUser != null) {
+            String current = newUser.getUsername().toLowerCase();
+            String newUserName = user.getUsername().toLowerCase();
+            if (newUserName.equals(current)) {
+                return new ValidationResponse(false, ERROR_2, 2);
+            }
+        }
+
         final String error = checkAllFiled(user, userRepository);
         int errorCode = errorCodeCheck(error);
         if (errorCode != NO_ERROR ) {
             return new ValidationResponse(false, error,errorCode);
         }
 
-        String userDetails = "Username: " + user.getUsername() + "\n" +
-                "Password: " + user.getPassword() + "\n" +
-                "Phone number: " + user.getPhoneNumber() + "\n" +
-                "Email: " + user.getEmail();
+        StringBuilder userDetails = new StringBuilder();
+        userDetails.append("Username: ").append(user.getUsername()).append("\n")
+                .append("Password: ").append(user.getPassword()).append("\n")
+                .append("Phone number: ").append(user.getPhoneNumber()).append("\n")
+                .append("Email: ").append(user.getEmail());
         System.out.println(userDetails);
-        System.out.println(sendEmail(user.getEmail(), "Details", userDetails));
+        System.out.println(sendEmail(user.getEmail(), "Details", userDetails.toString()));
+       // System.out.println(sendEmail("yakov152005@walla.co.il","Details",userDetails.toString()));
 
         String salt = generateSalt();
         String hashedPassword = hashPassword(user.getPassword(), salt);
-
         user.setSalt(salt);
         user.setPasswordHash(hashedPassword);
         userRepository.save(user);
@@ -89,8 +100,10 @@ public class UserController {
         String currentPassword = changePasswordDetails.get("currentPassword");
         String newPassword = changePasswordDetails.get("newPassword");
 
+        boolean checkNewPassword = checkPassword(newPassword);
+
         User user = userRepository.findByUsername(username);
-        if (user != null ){
+        if (user != null && checkNewPassword){
 
             String storedSalt = user.getSalt();
             String currentPasswordHash = hashPassword(currentPassword,storedSalt);
@@ -105,12 +118,12 @@ public class UserController {
                 user.setPasswordHash(hashedPassword);
                 userRepository.save(user);
 
-                return new BasicResponse(true, "The password is changed.");
+                return new BasicResponse(true, "The password successful Changed");
             }else {
                 return new BasicResponse(false,"The current password you entered is incorrect.");
             }
         }
-        return new BasicResponse(false,"The password not change.");
+        return new BasicResponse(false,ERROR_3);
     }
 
 

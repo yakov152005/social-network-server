@@ -29,7 +29,7 @@ public class GeneratorUtils {
         int randomSpecialChar = r.nextInt(specialChar.length() -1);
         String verifyCode  = String.valueOf(letters.charAt(randomLetters));
         verifyCode += String.valueOf(specialChar.charAt(randomSpecialChar));
-        verifyCode += String.format("%05d",r.nextInt(10000));
+        verifyCode += String.format("%08d",r.nextInt(10000000));
         return verifyCode;
     }
 
