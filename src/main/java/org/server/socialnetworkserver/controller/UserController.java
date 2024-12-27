@@ -173,8 +173,12 @@ public class UserController {
 
 
     @GetMapping("/get-all-user-names")
-    public List<String> getAllUserNames() {
-        return userRepository.findAllUsernames();
+    public UserNamesResponse getAllUserNames() {
+        List<String> usernames = userRepository.findAllUsernames();
+        if (usernames.isEmpty()){
+            return new UserNamesResponse(false,"No names exist",null);
+        }
+        return new UserNamesResponse(true,"All usernames.",usernames);
     }
 
     @GetMapping("/reset-password/{email}&{username}")
