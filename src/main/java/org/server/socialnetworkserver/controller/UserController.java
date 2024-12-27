@@ -171,12 +171,17 @@ public class UserController {
         return userRepository.findAllUsernames();
     }
 
-    @GetMapping("/reset-password/{email}")
-    public BasicResponse resetPasswordForThisUser(@PathVariable String email) {
+    @GetMapping("/reset-password/{email}&{username}")
+    public BasicResponse resetPasswordForThisUser(@PathVariable String email, @PathVariable String username) {
         User user = userRepository.findByEmailIgnoreCase(email);
+        User user1 = userRepository.findByUsername(username);
 
-        if (user == null) {
-            return new ValidationResponse(false, "This email does not exist", ERROR_EMAIL);
+        if (user == null || user1 == null) {
+            return new ValidationResponse(false, "This email/username does not exist", ERROR_EMAIL);
+        }
+
+        if (!user.getUsername().equals(user1.getUsername())){
+            return new BasicResponse(false,"Username does not match email, password reset failed.");
         }
 
         String newPassword = generatorPassword();
@@ -194,12 +199,7 @@ public class UserController {
         return new BasicResponse(true, "The password was sent to your email. Check it.");
     }
 
-    /**
-     * posts
-     * @param username
-     * @param postDetails
-     * @return add post
-     */
+
     @PostMapping("/add-post/{username}")
     public BasicResponse addPost(@PathVariable String username, @RequestBody Map<String,String> postDetails){
         String content = postDetails.get("content");
