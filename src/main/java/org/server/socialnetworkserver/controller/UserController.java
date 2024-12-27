@@ -1,4 +1,5 @@
 package org.server.socialnetworkserver.controller;
+
 import org.server.socialnetworkserver.entitys.Post;
 import org.server.socialnetworkserver.repository.PostRepository;
 import org.server.socialnetworkserver.responses.*;
@@ -7,11 +8,16 @@ import org.server.socialnetworkserver.entitys.User;
 import org.server.socialnetworkserver.utils.ApiSmsSender;
 import org.server.socialnetworkserver.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import static org.server.socialnetworkserver.service.HelpMethods.*;
 import static org.server.socialnetworkserver.utils.ApiEmailProcessor.sendEmail;
 import static org.server.socialnetworkserver.utils.Constants.Errors.*;
@@ -26,7 +32,7 @@ public class UserController {
     private final Map<String, String> verificationCodes = new HashMap<>();
 
     @Autowired
-    public UserController(UserRepository userRepository, PostRepository postRepository){
+    public UserController(UserRepository userRepository, PostRepository postRepository) {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
     }
@@ -45,8 +51,8 @@ public class UserController {
 
         final String error = checkAllFiled(user, userRepository);
         int errorCode = errorCodeCheck(error);
-        if (errorCode != NO_ERROR ) {
-            return new ValidationResponse(false, error,errorCode);
+        if (errorCode != NO_ERROR) {
+            return new ValidationResponse(false, error, errorCode);
         }
 
         StringBuilder userDetails = new StringBuilder();
@@ -56,7 +62,7 @@ public class UserController {
                 .append("Email: ").append(user.getEmail());
         System.out.println(userDetails);
         System.out.println(sendEmail(user.getEmail(), "Details", userDetails.toString()));
-       // System.out.println(sendEmail("yakov152005@walla.co.il","Details",userDetails.toString()));
+        // System.out.println(sendEmail("yakov152005@walla.co.il","Details",userDetails.toString()));
 
         String salt = generateSalt();
         String hashedPassword = hashPassword(user.getPassword(), salt);
@@ -85,17 +91,17 @@ public class UserController {
                     ApiSmsSender.sendSms("Your verification code: " + verificationCode,
                             List.of(currentUser.getPhoneNumber()));
 
-                    return new LoginResponse(true,"SMS sent with verification code.",username);
+                    return new LoginResponse(true, "SMS sent with verification code.", username);
                 }
-            }else {
-                return new LoginResponse(false,"This username is not exist!",null);
+            } else {
+                return new LoginResponse(false, "This username is not exist!", null);
             }
         }
-        return new LoginResponse(false,"The username or password is incorrect.",null);
+        return new LoginResponse(false, "The username or password is incorrect.", null);
     }
 
     @PostMapping("/change-password")
-    public BasicResponse changePassword(@RequestBody Map<String,String> changePasswordDetails){
+    public BasicResponse changePassword(@RequestBody Map<String, String> changePasswordDetails) {
         String username = changePasswordDetails.get("username");
         String currentPassword = changePasswordDetails.get("currentPassword");
         String newPassword = changePasswordDetails.get("newPassword");
@@ -103,10 +109,10 @@ public class UserController {
         boolean checkNewPassword = checkPassword(newPassword);
 
         User user = userRepository.findByUsername(username);
-        if (user != null && checkNewPassword){
+        if (user != null && checkNewPassword) {
 
             String storedSalt = user.getSalt();
-            String currentPasswordHash = hashPassword(currentPassword,storedSalt);
+            String currentPasswordHash = hashPassword(currentPassword, storedSalt);
 
             String storedPasswordHash = user.getPasswordHash();
             if (storedPasswordHash.equals(currentPasswordHash)) {
@@ -119,11 +125,11 @@ public class UserController {
                 userRepository.save(user);
 
                 return new BasicResponse(true, "The password successful Changed");
-            }else {
-                return new BasicResponse(false,"The current password you entered is incorrect.");
+            } else {
+                return new BasicResponse(false, "The current password you entered is incorrect.");
             }
         }
-        return new BasicResponse(false,ERROR_3);
+        return new BasicResponse(false, ERROR_3);
     }
 
 
@@ -167,7 +173,7 @@ public class UserController {
 
 
     @GetMapping("/get-all-user-names")
-    public List<String> getAllUserNames(){
+    public List<String> getAllUserNames() {
         return userRepository.findAllUsernames();
     }
 
@@ -180,8 +186,8 @@ public class UserController {
             return new ValidationResponse(false, "This email/username does not exist", ERROR_EMAIL);
         }
 
-        if (!user.getUsername().equals(user1.getUsername())){
-            return new BasicResponse(false,"Username does not match email, password reset failed.");
+        if (!user.getUsername().equals(user1.getUsername())) {
+            return new BasicResponse(false, "Username does not match email, password reset failed.");
         }
 
         String newPassword = generatorPassword();
@@ -201,52 +207,69 @@ public class UserController {
 
 
     @PostMapping("/add-post/{username}")
-    public BasicResponse addPost(@PathVariable String username, @RequestBody Map<String,String> postDetails){
+    public BasicResponse addPost(@PathVariable String username, @RequestBody Map<String, String> postDetails) {
         String content = postDetails.get("content");
         String imageUrl = postDetails.get("imageUrl");
 
-        if (content == null || content.isEmpty()){
-            return new BasicResponse(false,"Content is Empty.");
+        if (content == null || content.isEmpty()) {
+            return new BasicResponse(false, "Content is Empty.");
         }
 
-        User user  = userRepository.findByUsername(username);
-        if (user == null){
-            return new BasicResponse(false,"User not Found.");
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            return new BasicResponse(false, "User not Found.");
         }
 
-        Post newPost = new Post(user,content,imageUrl);
+        Post newPost = new Post(user, content, imageUrl);
         postRepository.save(newPost);
 
         return new BasicResponse(true, "Post added successfully.");
     }
 
     @GetMapping("/get-post-by-username/{username}")
-    public PostResponse getPostByUserName(@PathVariable String username){
+    public PostResponse getPostByUserName(@PathVariable String username) {
         User user = userRepository.findByUsername(username);
-        if (user == null){
-            return new PostResponse(false,"User not found",null);
+        if (user == null) {
+            return new PostResponse(false, "User not found", null);
         }
 
         List<Post> allPostsByUser = postRepository.findPostsByUsername(username);
-        if (allPostsByUser.isEmpty()){
+        if (allPostsByUser.isEmpty()) {
             return new PostResponse(false, "No posts found for the user.", null);
         }
 
         List<PostDto> postDtos = allPostsByUser.stream()
-                .map(post -> new PostDto(post.getUser().getUsername(),post.getUser().getProfilePicture(), post.getContent(), post.getImageUrl(),post.getDate()))
+                .map(post -> new PostDto(post.getUser().getUsername(), post.getUser().getProfilePicture(), post.getContent(), post.getImageUrl(), post.getDate()))
                 .toList();
 
         return new PostResponse(true, "All posts by user.", postDtos);
     }
 
     @GetMapping("/home-feed-post/{username}")
-    public PostResponse getHomeFeedPost(@PathVariable String username){
+    public PostResponse getHomeFeedPost
+            (
+            @PathVariable String username,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+            )
+    {
+        System.out.println("Received request - Username: " + username + ", Page: " + page + ", Size: " + size);
+
         User user = userRepository.findByUsername(username);
-        if (user == null){
-            return new PostResponse(false,"User not found.",null);
+        if (user == null) {
+            System.out.println("No posts found for this page.");
+
+            return new PostResponse(false, "User not found.", null);
         }
 
-        List<Post> homeFeedPosts = postRepository.findHomeFeedPosts(username);
+        /**
+         * אם אני רוצה אני יכול לעשות SORT ישירות מה PAGEABLE ולהוריד מהשאילתה בשביל מיון דינמי
+         * משהו שאני לא חושב שיהיה לי בו שימוש אבל נשאיר בנתיים על הערה
+         */
+        // Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date")); WITH SORT
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> homeFeedPosts = postRepository.findHomeFeedPosts(username, pageable);
+
         if (homeFeedPosts.isEmpty()) {
             return new PostResponse(false, "No posts found for the user.", null);
         }
@@ -260,35 +283,32 @@ public class UserController {
                         post.getDate()))
                 .toList();
 
-        return new PostResponse(true,"All posts home feed.",postDtos);
+        System.out.println("Returning " + postDtos.size() + " posts for page " + page);
+        return new PostResponse(true, "All posts home feed.", postDtos);
     }
 
     @PostMapping("/add-profile-pic")
-    public BasicResponse addProfilePicture(@RequestBody Map<String,String> addPicProfile){
+    public BasicResponse addProfilePicture(@RequestBody Map<String, String> addPicProfile) {
         String username = addPicProfile.get("username");
         String newPicture = addPicProfile.get("profilePicture");
         User user = userRepository.findByUsername(username);
-        if (user != null){
+        if (user != null) {
             user.setProfilePicture(newPicture);
             userRepository.save(user);
-            return new BasicResponse(true,"Add profile pic success.");
+            return new BasicResponse(true, "Add profile pic success.");
         }
 
-        return new BasicResponse(false,"Add profile pic NOT success.");
+        return new BasicResponse(false, "Add profile pic NOT success.");
     }
 
     @GetMapping("/get-profile-pic/{username}")
-    public ProfilePicResponse getProfilePictureByUsername(@PathVariable String username){
+    public ProfilePicResponse getProfilePictureByUsername(@PathVariable String username) {
         User user = userRepository.findByUsername(username);
-        if (user != null){
-            return new ProfilePicResponse(true,"Success send profile pic",user.getProfilePicture());
+        if (user != null) {
+            return new ProfilePicResponse(true, "Success send profile pic", user.getProfilePicture());
         }
-        return new ProfilePicResponse(false,"Not success",null);
+        return new ProfilePicResponse(false, "Not success", null);
     }
-
-
-
-
 
 
 }
