@@ -1,5 +1,7 @@
 package org.server.socialnetworkserver.controller;
 
+import org.server.socialnetworkserver.dto.PostDto;
+import org.server.socialnetworkserver.dto.UsernameWithPicDTO;
 import org.server.socialnetworkserver.entitys.Post;
 import org.server.socialnetworkserver.repository.PostRepository;
 import org.server.socialnetworkserver.responses.*;
@@ -11,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -171,7 +172,19 @@ public class UserController {
         return response;
     }
 
+    @GetMapping("/get-all-user-names-and-pic")
+    public UserNamesWithPicResponse getAllUserNamesAndPic() {
+        List<UsernameWithPicDTO> result = userRepository.findAllUsernamesWithPic();
+        if (result.isEmpty()){
+            return new UserNamesWithPicResponse(false,"No Users exist.",null);
+        }
 
+        return new UserNamesWithPicResponse(true,"All users with pic.",result);
+    }
+
+
+
+    /*
     @GetMapping("/get-all-user-names")
     public UserNamesResponse getAllUserNames() {
         List<String> usernames = userRepository.findAllUsernames();
@@ -180,6 +193,7 @@ public class UserController {
         }
         return new UserNamesResponse(true,"All usernames.",usernames);
     }
+     */
 
     @GetMapping("/reset-password/{email}&{username}")
     public BasicResponse resetPasswordForThisUser(@PathVariable String email, @PathVariable String username) {

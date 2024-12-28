@@ -1,5 +1,7 @@
 package org.server.socialnetworkserver.responses;
 
+import org.server.socialnetworkserver.dto.PostDto;
+
 import java.util.List;
 
 public class PostResponse extends BasicResponse{

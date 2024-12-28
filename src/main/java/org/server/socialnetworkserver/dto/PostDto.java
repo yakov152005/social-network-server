@@ -1,4 +1,4 @@
-package org.server.socialnetworkserver.responses;
+package org.server.socialnetworkserver.dto;
 
 import java.util.Date;
 
