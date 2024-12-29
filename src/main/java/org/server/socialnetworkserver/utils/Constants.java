@@ -10,15 +10,19 @@ public class Constants {
 
     public static Dotenv dotenv = Dotenv.load();
 
+    public class ForTest{
+        public static final String URL_TEST = dotenv.get("URL_TEST");
+    }
+
     public class UrlClient{
         public static final String URL_SERVER = "/social-network";
-        public static final String URL_CLIENT_PC = "http://localhost:3000";
-        public static final String URL_CLIENT_LAPTOP = "http://localhost:3001";
+        public static final String URL_CLIENT_PC = dotenv.get("URL_CLIENT_PC");
+        public static final String URL_CLIENT_LAPTOP = dotenv.get("URL_CLIENT_LAPTOP");
 
     }
 
     public class DataBase{
-        public static final String DB_HOST = "localhost";
+        public static final String DB_HOST = dotenv.get("DB_HOST");
         public static final String DB_USER = dotenv.get("DB_USER");
         public static final String DB_PASSWORD = dotenv.get("DB_PASSWORD");
         public static final String DB_NAME = dotenv.get("DB_NAME");
