@@ -1,11 +1,11 @@
-package org.server.socialnetworkserver.dto;
+package org.server.socialnetworkserver.dtos;
 
 
-public class UsernameWithPicDTO {
+public class UsernameWithPicDto {
     private String username;
     private String profilePicture;
 
-    public UsernameWithPicDTO(String username, String profilePicture) {
+    public UsernameWithPicDto(String username, String profilePicture) {
         this.username = username;
         this.profilePicture = profilePicture;
     }

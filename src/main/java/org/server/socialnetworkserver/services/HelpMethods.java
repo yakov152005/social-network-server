@@ -1,7 +1,7 @@
-package org.server.socialnetworkserver.service;
+package org.server.socialnetworkserver.services;
 
-import org.server.socialnetworkserver.repository.UserRepository;
 import org.server.socialnetworkserver.entitys.User;
+import org.server.socialnetworkserver.repositoris.UserRepository;
 
 import java.util.List;
 

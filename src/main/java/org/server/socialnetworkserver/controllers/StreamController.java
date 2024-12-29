@@ -1,4 +1,4 @@
-package org.server.socialnetworkserver.controller;
+package org.server.socialnetworkserver.controllers;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.web.bind.annotation.GetMapping;

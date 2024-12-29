@@ -1,4 +1,4 @@
-package org.server.socialnetworkserver.repository;
+package org.server.socialnetworkserver.repositoris;
 
 import org.server.socialnetworkserver.entitys.Post;
 import org.springframework.data.domain.Page;

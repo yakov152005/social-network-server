@@ -11,8 +11,10 @@ public class Constants {
     public static Dotenv dotenv = Dotenv.load();
 
     public class UrlClient{
+        public static final String URL_SERVER = "/social-network";
         public static final String URL_CLIENT_PC = "http://localhost:3000";
         public static final String URL_CLIENT_LAPTOP = "http://localhost:3001";
+
     }
 
     public class DataBase{

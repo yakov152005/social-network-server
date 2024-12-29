@@ -1,9 +1,9 @@
 package org.server.socialnetworkserver.responses;
 
-public class ProfilePicResponse extends BasicResponse{
+public class ProfilePictureResponse extends BasicResponse{
     private String profilePicture;
 
-    public ProfilePicResponse(boolean success, String error,String profilePicture){
+    public ProfilePictureResponse(boolean success, String error, String profilePicture){
         super(success,error);
         this.profilePicture = profilePicture;
     }

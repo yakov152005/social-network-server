@@ -1,8 +1,8 @@
-package org.server.socialnetworkserver.repository;
+package org.server.socialnetworkserver.repositoris;
 
 
 import org.server.socialnetworkserver.entitys.User;
-import org.server.socialnetworkserver.dto.UsernameWithPicDTO;
+import org.server.socialnetworkserver.dtos.UsernameWithPicDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -19,11 +19,13 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     List<String> findAllUsernames();
 
     @Query("""
-            SELECT 
-            new org.server.socialnetworkserver.dto.UsernameWithPicDTO
+            SELECT
+            new org.server.socialnetworkserver.dtos.UsernameWithPicDto
             (u.username, u.profilePicture) FROM User u
             """)
-    List<UsernameWithPicDTO> findAllUsernamesWithPic();
+    List<UsernameWithPicDto> findAllUsernamesWithPic();
+
+
 
 
 }

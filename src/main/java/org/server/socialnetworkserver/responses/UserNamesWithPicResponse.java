@@ -1,22 +1,22 @@
 package org.server.socialnetworkserver.responses;
 
-import org.server.socialnetworkserver.dto.UsernameWithPicDTO;
+import org.server.socialnetworkserver.dtos.UsernameWithPicDto;
 
 import java.util.List;
 
 public class UserNamesWithPicResponse extends BasicResponse{
-    private List<UsernameWithPicDTO> usernameWithPicDTOS;
+    private List<UsernameWithPicDto> usernameWithPicDtos;
 
-    public UserNamesWithPicResponse(boolean success,String error,List<UsernameWithPicDTO> usernameWithPicDTOS){
+    public UserNamesWithPicResponse(boolean success,String error,List<UsernameWithPicDto> usernameWithPicDtos){
         super(success,error);
-        this.usernameWithPicDTOS = usernameWithPicDTOS;
+        this.usernameWithPicDtos = usernameWithPicDtos;
     }
 
-    public List<UsernameWithPicDTO> getUsernameWithPicDTOS() {
-        return usernameWithPicDTOS;
+    public List<UsernameWithPicDto> getUsernameWithPicDTOS() {
+        return usernameWithPicDtos;
     }
 
-    public void setUsernameWithPicDTOS(List<UsernameWithPicDTO> usernameWithPicDTOS) {
-        this.usernameWithPicDTOS = usernameWithPicDTOS;
+    public void setUsernameWithPicDTOS(List<UsernameWithPicDto> usernameWithPicDtos) {
+        this.usernameWithPicDtos = usernameWithPicDtos;
     }
 }

@@ -1,4 +1,4 @@
-package org.server.socialnetworkserver.dto;
+package org.server.socialnetworkserver.dtos;
 
 import java.util.Date;
 
