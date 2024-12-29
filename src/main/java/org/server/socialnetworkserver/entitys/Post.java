@@ -3,7 +3,9 @@ package org.server.socialnetworkserver.entitys;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "POST")
@@ -25,6 +27,9 @@ public class Post {
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
     private Date date;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Like> likes = new ArrayList<>();
 
     public Post() {}
 
@@ -74,4 +79,13 @@ public class Post {
     public void setDate(Date date) {
         this.date = date;
     }
+
+    public List<Like> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List<Like> likes) {
+        this.likes = likes;
+    }
+
 }

@@ -3,18 +3,32 @@ package org.server.socialnetworkserver.dtos;
 import java.util.Date;
 
 public class PostDto {
+    private long id;
     private String username;
     private String profilePicture;
     private String content;
     private String imageUrl;
     private Date date;
+    boolean isLikedByUser;
+    private int likesCount;
 
-    public PostDto(String username, String profilePicture,String content, String imageUrl, Date date) {
+    public PostDto(long id,String username, String profilePicture,String content, String imageUrl, Date date, boolean isLikedByUser, int likesCount) {
+        this.id = id;
         this.username = username;
         this.profilePicture = profilePicture;
         this.content = content;
         this.imageUrl = imageUrl;
         this.date = date;
+        this.isLikedByUser = isLikedByUser;
+        this.likesCount = likesCount;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -59,6 +73,22 @@ public class PostDto {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public boolean isLikedByUser() {
+        return isLikedByUser;
+    }
+
+    public void setLikedByUser(boolean likedByUser) {
+        isLikedByUser = likedByUser;
+    }
+
+    public int getLikesCount() {
+        return likesCount;
+    }
+
+    public void setLikesCount(int likesCount) {
+        this.likesCount = likesCount;
     }
 
     @Override

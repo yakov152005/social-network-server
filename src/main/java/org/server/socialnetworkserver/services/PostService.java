@@ -3,6 +3,7 @@ package org.server.socialnetworkserver.services;
 import org.server.socialnetworkserver.dtos.PostDto;
 import org.server.socialnetworkserver.entitys.Post;
 import org.server.socialnetworkserver.entitys.User;
+import org.server.socialnetworkserver.repositoris.LikeRepository;
 import org.server.socialnetworkserver.repositoris.PostRepository;
 import org.server.socialnetworkserver.repositoris.UserRepository;
 import org.server.socialnetworkserver.responses.BasicResponse;
@@ -25,14 +26,15 @@ public class PostService {
 
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final LikeRepository likeRepository;
 
 
     @Autowired
-    public PostService(UserRepository userRepository, PostRepository postRepository) {
+    public PostService(UserRepository userRepository, PostRepository postRepository,LikeRepository likeRepository) {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
+        this.likeRepository = likeRepository;
     }
-
 
 
     public BasicResponse addPost(@PathVariable String username, @RequestBody Map<String, String> postDetails) {
@@ -69,11 +71,15 @@ public class PostService {
 
         List<PostDto> postDtos = allPostsByUser.stream()
                 .map(post -> new PostDto(
+                        post.getId(),
                         post.getUser().getUsername(),
                         post.getUser().getProfilePicture(),
                         post.getContent(),
                         post.getImageUrl(),
-                        post.getDate()))
+                        post.getDate(),
+                        likeRepository.isLikedByUser(post.getId(),user.getId()),
+                        likeRepository.countLikeByPost(post.getId())
+                ))
                 .toList();
 
         return new PostResponse(true, "All posts by user.", postDtos);
@@ -95,11 +101,7 @@ public class PostService {
             return new PostResponse(false, "User not found.", null);
         }
 
-        /**
-         * אם אני רוצה אני יכול לעשות SORT ישירות מה PAGEABLE ולהוריד מהשאילתה בשביל מיון דינמי
-         * משהו שאני לא חושב שיהיה לי בו שימוש אבל נשאיר בנתיים על הערה
-         */
-        // Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "date")); WITH SORT
+
         Pageable pageable = PageRequest.of(page, size);
         Page<Post> homeFeedPosts = postRepository.findHomeFeedPosts(username, pageable);
 
@@ -109,11 +111,15 @@ public class PostService {
 
         List<PostDto> postDtos = homeFeedPosts.stream()
                 .map(post -> new PostDto(
+                        post.getId(),
                         post.getUser().getUsername(),
                         post.getUser().getProfilePicture(),
                         post.getContent(),
                         post.getImageUrl(),
-                        post.getDate()))
+                        post.getDate(),
+                        likeRepository.isLikedByUser(post.getId(),user.getId()),
+                        likeRepository.countLikeByPost(post.getId())
+                ))
                 .toList();
 
         System.out.println("Returning " + postDtos.size() + " posts for page " + page);

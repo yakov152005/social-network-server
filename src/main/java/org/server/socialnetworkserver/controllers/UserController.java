@@ -65,5 +65,10 @@ public class UserController {
        return userService.getProfilePictureByUsername(username);
     }
 
+    @GetMapping("/get-all-user-names-and-pic")
+    public UserNamesWithPicResponse getAllUserNamesAndPic() {
+        return userService.getAllUserNamesAndPic();
+    }
+
 }
 

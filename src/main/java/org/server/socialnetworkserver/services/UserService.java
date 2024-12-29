@@ -212,7 +212,7 @@ public class UserService {
         return new ProfilePictureResponse(false, "Not success", null);
     }
 
-    @GetMapping("/get-all-user-names-and-pic")
+
     public UserNamesWithPicResponse getAllUserNamesAndPic() {
         List<UsernameWithPicDto> result = userRepository.findAllUsernamesWithPic();
         if (result.isEmpty()){
