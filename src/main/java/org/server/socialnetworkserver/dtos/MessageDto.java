@@ -1,37 +1,16 @@
-package org.server.socialnetworkserver.entitys;
-
-import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
+package org.server.socialnetworkserver.dtos;
 
 import java.util.Date;
 
-@Entity
-@Table(name = "MESSAGE")
-public class Message {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class MessageDto {
     private long id;
-
-    @ManyToOne
-    @JoinColumn(name = "sender_id",nullable = false)
-    private User sender;
-
-    @ManyToOne
-    @JoinColumn(name = "receiver_id", nullable = false)
-    private User receiver;
-
-    @Column(nullable = false, length = 200)
+    private String sender;
+    private String receiver;
     private String content;
-
-    @Column(nullable = false)
     private boolean isRead;
-
-    @Column(nullable = false,updatable = false)
-    @CreationTimestamp
     private Date sentAt;
 
-
-    public Message(long id, User sender, User receiver, String content, boolean isRead, Date sentAt) {
+    public MessageDto(long id, String sender, String receiver, String content, boolean isRead, Date sentAt) {
         this.id = id;
         this.sender = sender;
         this.receiver = receiver;
@@ -40,7 +19,7 @@ public class Message {
         this.sentAt = sentAt;
     }
 
-    public Message() {
+    public MessageDto() {
     }
 
     public long getId() {
@@ -51,19 +30,19 @@ public class Message {
         this.id = id;
     }
 
-    public User getSender() {
+    public String getSender() {
         return sender;
     }
 
-    public void setSender(User sender) {
+    public void setSender(String sender) {
         this.sender = sender;
     }
 
-    public User getReceiver() {
+    public String getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(User receiver) {
+    public void setReceiver(String receiver) {
         this.receiver = receiver;
     }
 
@@ -79,7 +58,7 @@ public class Message {
         return isRead;
     }
 
-    public void setIsRead(boolean isRead) {
+    public void setRead(boolean isRead) {
         this.isRead = isRead;
     }
 
@@ -90,4 +69,5 @@ public class Message {
     public void setSentAt(Date sentAt) {
         this.sentAt = sentAt;
     }
+
 }

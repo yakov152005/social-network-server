@@ -8,7 +8,7 @@ import static org.server.socialnetworkserver.utils.Constants.ForTest.URL_TEST;
 
 public class LoadTest {
     public static void main(String[] args) throws Exception {
-        AtomicInteger count503 = new AtomicInteger();
+          AtomicInteger count503 = new AtomicInteger();
         AtomicInteger count200 = new AtomicInteger();
         for (int i = 0; i < 100; i++) {
             new Thread(() -> {
@@ -31,5 +31,6 @@ public class LoadTest {
         }
         System.out.println("Count code 200:" + count200);
         System.out.println("Count code 503:" + count503);
+
     }
 }

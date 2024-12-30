@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.CompletableFuture;
 
+
 import static org.server.socialnetworkserver.utils.Constants.UrlClient.URL_SERVER;
 
 @RestController
@@ -18,7 +19,7 @@ public class TestController {
     public CompletableFuture<ResponseEntity<String>> slowEndpoint() {
         return CompletableFuture.supplyAsync(() -> {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(5000);
                 return ResponseEntity.ok("Response after delay");
             } catch (InterruptedException e) {
                 return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body("Timeout");
