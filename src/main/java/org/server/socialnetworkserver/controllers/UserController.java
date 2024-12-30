@@ -70,5 +70,10 @@ public class UserController {
         return userService.getAllUserNamesAndPic();
     }
 
+    @DeleteMapping("/delete-user/{username}&{password}")
+    public BasicResponse deleteUser(@PathVariable String username, @PathVariable String password){
+        return userService.deleteUser(username,password);
+    }
+
 }
 

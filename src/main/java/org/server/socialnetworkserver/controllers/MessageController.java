@@ -1,5 +1,7 @@
 package org.server.socialnetworkserver.controllers;
 
+import org.server.socialnetworkserver.dtos.ChatUserDto;
+import org.server.socialnetworkserver.responses.ChatUserResponse;
 import org.server.socialnetworkserver.responses.MessageDtoResponse;
 import org.server.socialnetworkserver.responses.MessageResponse;
 import org.server.socialnetworkserver.services.MessageService;
@@ -35,7 +37,7 @@ public class MessageController {
     }
 
     @GetMapping("/get-chat-users/{username}")
-    public List<String> getChatUsers(@PathVariable String username) {
+    public ChatUserResponse getChatUsers(@PathVariable String username) {
         return messageService.getChatUsers(username);
     }
 

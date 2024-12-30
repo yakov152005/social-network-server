@@ -1,12 +1,17 @@
 package org.server.socialnetworkserver.services;
+
 import org.server.socialnetworkserver.dtos.UsernameWithPicDto;
 import org.server.socialnetworkserver.entitys.User;
+import org.server.socialnetworkserver.repositoris.LikeRepository;
+import org.server.socialnetworkserver.repositoris.MessageRepository;
+import org.server.socialnetworkserver.repositoris.PostRepository;
 import org.server.socialnetworkserver.repositoris.UserRepository;
 import org.server.socialnetworkserver.responses.*;
 import org.server.socialnetworkserver.utils.ApiSmsSender;
 import org.server.socialnetworkserver.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -21,14 +26,20 @@ import static org.server.socialnetworkserver.utils.GeneratorUtils.*;
 @Service
 public class UserService {
 
+
+    private final LikeRepository likeRepository;
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
+    private final MessageRepository messageRepository;
     private final Map<String, String> verificationCodes = new HashMap<>();
 
     @Autowired
-    public UserService(UserRepository userRepository){
+    public UserService(LikeRepository likeRepository,UserRepository userRepository,PostRepository postRepository, MessageRepository messageRepository) {
+        this.likeRepository = likeRepository;
         this.userRepository = userRepository;
+        this.postRepository = postRepository;
+        this.messageRepository = messageRepository;
     }
-
 
     public ValidationResponse addUser(@RequestBody User user) {
         User newUser = userRepository.findByUsername(user.getUsername());
@@ -215,11 +226,40 @@ public class UserService {
 
     public UserNamesWithPicResponse getAllUserNamesAndPic() {
         List<UsernameWithPicDto> result = userRepository.findAllUsernamesWithPic();
-        if (result.isEmpty()){
-            return new UserNamesWithPicResponse(false,"No Users exist.",null);
+        if (result.isEmpty()) {
+            return new UserNamesWithPicResponse(false, "No Users exist.", null);
         }
 
-        return new UserNamesWithPicResponse(true,"All users with pic.",result);
+        return new UserNamesWithPicResponse(true, "All users with pic.", result);
     }
+
+    @Transactional
+    public BasicResponse deleteUser(String username, String password) {
+        User user = userRepository.findByUsername(username);
+        if (user != null) {
+            String storedSalt = user.getSalt();
+            String currentPasswordHash = hashPassword(password, storedSalt);
+
+            String storedPasswordHash = user.getPasswordHash();
+            if (storedPasswordHash.equals(currentPasswordHash)) {
+                System.out.println("Password match. Proceeding to delete...");
+
+                likeRepository.deleteByPostUser(user);
+                System.out.println("Likes for user's posts deleted.");
+                likeRepository.deleteByUser(user);
+                System.out.println("Likes by user deleted.");
+                messageRepository.deleteBySenderOrReceiver(user);
+                System.out.println("Messages deleted.");
+                postRepository.deleteByUser(user);
+                System.out.println("Posts deleted.");
+                userRepository.delete(user);
+
+                return new BasicResponse(true, "User deleted successfully.");
+            }
+        }
+        return new BasicResponse(false, "User not deleted. Invalid username or password.");
+    }
+
+
 
 }

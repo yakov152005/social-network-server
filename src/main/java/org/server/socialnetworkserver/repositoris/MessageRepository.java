@@ -1,10 +1,14 @@
 package org.server.socialnetworkserver.repositoris;
 
 import org.server.socialnetworkserver.entitys.Message;
+import org.server.socialnetworkserver.dtos.ChatUserDto;
+import org.server.socialnetworkserver.entitys.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,14 +25,21 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
     List<Message> findMessagesByUser(@Param("username") String username);
 
     @Query("""
-            SELECT DISTINCT CASE
+        SELECT DISTINCT new org.server.socialnetworkserver.dtos.ChatUserDto(
+            CASE
                 WHEN m.sender.username = :username THEN m.receiver.username
                 ELSE m.sender.username
-            END AS chatWith
-            FROM Message m
-            WHERE m.sender.username = :username OR m.receiver.username = :username
-            """)
-    List<String> findChatUsers(@Param("username") String username);
+            END,
+            CASE
+                WHEN m.sender.username = :username THEN m.receiver.profilePicture
+                ELSE m.sender.profilePicture
+            END
+        )
+        FROM Message m
+        WHERE (m.sender.username = :username OR m.receiver.username = :username)
+        """)
+    List<ChatUserDto> findChatUsers(@Param("username") String username);
+
 
     @Query("""
                SELECT m FROM Message m
@@ -40,5 +51,10 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             """)
     List<Message> findMessagesBetweenUsers(@Param("sender") String sender, @Param("receiver") String receiver);
 
+
+    @Modifying
+    @Transactional
+    @Query("DELETE FROM Message m WHERE m.receiver = :user OR m.sender = :user")
+    void deleteBySenderOrReceiver(@Param("user") User user);
 
 }

@@ -16,8 +16,10 @@ public class RequestTimingFilter implements Filter {
         try {
             chain.doFilter(request, response);
         } catch (ServletException e) {
+            System.out.println("נתפסה שגיאה SERVLET");
             throw new RuntimeException(e);
         } catch (IOException e) {
+            System.out.println("נתפסה שגיאה IO");
             throw new RuntimeException(e);
         } finally {
             long endTime = System.currentTimeMillis();

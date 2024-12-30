@@ -6,13 +6,13 @@ import org.server.socialnetworkserver.entitys.Message;
 import org.server.socialnetworkserver.entitys.User;
 import org.server.socialnetworkserver.repositoris.MessageRepository;
 import org.server.socialnetworkserver.repositoris.UserRepository;
-import org.server.socialnetworkserver.responses.BasicResponse;
+import org.server.socialnetworkserver.dtos.ChatUserDto;
+import org.server.socialnetworkserver.responses.ChatUserResponse;
 import org.server.socialnetworkserver.responses.MessageDtoResponse;
 import org.server.socialnetworkserver.responses.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -41,6 +41,7 @@ public class MessageService {
                         message.getId(),
                         message.getSender().getUsername(),
                         message.getReceiver().getUsername(),
+                        message.getReceiver().getProfilePicture(),
                         message.getContent(),
                         message.isRead(),
                         message.getSentAt()
@@ -68,6 +69,7 @@ public class MessageService {
                 message.getId(),
                 message.getSender().getUsername(),
                 message.getReceiver().getUsername(),
+                message.getReceiver().getProfilePicture(),
                 message.getContent(),
                 message.isRead(),
                 message.getSentAt()
@@ -78,8 +80,12 @@ public class MessageService {
         return new MessageResponse(true,"Message send successfully.",messageDto);
     }
 
-    public List<String> getChatUsers(String username) {
-        return messageRepository.findChatUsers(username);
+    public ChatUserResponse getChatUsers(String username) {
+        List<ChatUserDto> chatUserDtos = messageRepository.findChatUsers(username);
+        if (chatUserDtos == null){
+            return new ChatUserResponse(false,"No chat user founded.",null);
+        }
+        return new ChatUserResponse(true,"All chats with profile pic send.",chatUserDtos);
     }
 
 

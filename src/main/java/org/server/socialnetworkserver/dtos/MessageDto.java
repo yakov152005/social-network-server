@@ -6,14 +6,16 @@ public class MessageDto {
     private long id;
     private String sender;
     private String receiver;
+    private String profilePicture;
     private String content;
     private boolean isRead;
     private Date sentAt;
 
-    public MessageDto(long id, String sender, String receiver, String content, boolean isRead, Date sentAt) {
+    public MessageDto(long id, String sender, String receiver,String profilePicture, String content, boolean isRead, Date sentAt) {
         this.id = id;
         this.sender = sender;
         this.receiver = receiver;
+        this.profilePicture = profilePicture;
         this.content = content;
         this.isRead = isRead;
         this.sentAt = sentAt;
@@ -44,6 +46,14 @@ public class MessageDto {
 
     public void setReceiver(String receiver) {
         this.receiver = receiver;
+    }
+
+    public String getProfilePicture() {
+        return profilePicture;
+    }
+
+    public void setProfilePicture(String profilePicture) {
+        this.profilePicture = profilePicture;
     }
 
     public String getContent() {

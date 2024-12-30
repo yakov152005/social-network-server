@@ -44,21 +44,12 @@ public class User{
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Post> posts;
 
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Message> sentMessages;
 
-    public User(String username, String password, String passwordConfirm,String passwordHash, String salt, String phoneNumber, String email, int age, List<Follow> followers, List<Follow> following, String profile,List<Post> posts) {
-        this.username = username;
-        this.password = password;
-        this.passwordConfirm = passwordConfirm;
-        this.passwordHash = passwordHash;
-        this.salt = salt;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.age = age;
-        this.followers = followers;
-        this.following = following;
-        this.profilePicture = profile;
-        this.posts = posts;
-    }
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Message> receivedMessages;
+
 
     public User(){
 
@@ -166,6 +157,22 @@ public class User{
 
     public void setPosts(List<Post> posts) {
         this.posts = posts;
+    }
+
+    public List<Message> getSentMessages() {
+        return sentMessages;
+    }
+
+    public void setSentMessages(List<Message> sentMessages) {
+        this.sentMessages = sentMessages;
+    }
+
+    public List<Message> getReceivedMessages() {
+        return receivedMessages;
+    }
+
+    public void setReceivedMessages(List<Message> receivedMessages) {
+        this.receivedMessages = receivedMessages;
     }
 
     @Override

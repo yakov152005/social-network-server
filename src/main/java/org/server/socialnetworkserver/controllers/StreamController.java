@@ -23,12 +23,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class StreamController {
 
     private final List<SseEmitter> dateEmitters;
-    private final MessageRepository messageRepository;
     private final Map<String, List<SseEmitter>> userEmitters;
-
+    private final MessageRepository messageRepository;
 
     @Autowired
-    public StreamController(MessageRepository messageRepository){
+    public StreamController(MessageRepository messageRepository) {
         this.userEmitters = new ConcurrentHashMap<>();
         this.dateEmitters = new CopyOnWriteArrayList<>();
         this.messageRepository = messageRepository;
@@ -94,19 +93,23 @@ public class StreamController {
         List<SseEmitter> emitters = userEmitters.get(receiverUsername);
         if (emitters != null) {
             for (SseEmitter emitter : emitters) {
+
                 try {
                     emitter.send(SseEmitter.event()
                             .name("newMessage")
                             .data(messageDto));
                 } catch (IOException e) {
-                    System.out.println("notifyUser " + emitter);
+                    System.out.println("Failed to send message to user: " + receiverUsername + ". Removing emitter.");
                     emitters.remove(emitter);
                 }
+
             }
-        }else {
+        } else {
             System.out.println("No active connection for user: " + receiverUsername);
         }
     }
+
+
 
     /*
    public void notifyUser(String receiverUsername, MessageDto messageDto) {
@@ -120,6 +123,7 @@ public class StreamController {
                             .data(messageDto));
                 } catch (IOException e) {
                     iterator.remove();
+                    System.out.println("חיבור נסגר");
                 }
             }
         } else {
