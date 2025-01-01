@@ -11,6 +11,7 @@ public class PostDto {
     private Date date;
     boolean isLikedByUser;
     private int likesCount;
+    private int commentCount;
 
     public PostDto(long id,String username, String profilePicture,String content, String imageUrl, Date date, boolean isLikedByUser, int likesCount) {
         this.id = id;
@@ -21,6 +22,18 @@ public class PostDto {
         this.date = date;
         this.isLikedByUser = isLikedByUser;
         this.likesCount = likesCount;
+    }
+
+    public PostDto(long id,String username, String profilePicture,String content, String imageUrl, Date date, boolean isLikedByUser, int likesCount,int commentCount) {
+        this.id = id;
+        this.username = username;
+        this.profilePicture = profilePicture;
+        this.content = content;
+        this.imageUrl = imageUrl;
+        this.date = date;
+        this.isLikedByUser = isLikedByUser;
+        this.likesCount = likesCount;
+        this.commentCount = commentCount;
     }
 
     public long getId() {
@@ -89,6 +102,14 @@ public class PostDto {
 
     public void setLikesCount(int likesCount) {
         this.likesCount = likesCount;
+    }
+
+    public int getCommentCount() {
+        return commentCount;
+    }
+
+    public void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
     }
 
     @Override

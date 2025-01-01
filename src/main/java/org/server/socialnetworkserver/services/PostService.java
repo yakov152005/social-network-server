@@ -3,6 +3,7 @@ package org.server.socialnetworkserver.services;
 import org.server.socialnetworkserver.dtos.PostDto;
 import org.server.socialnetworkserver.entitys.Post;
 import org.server.socialnetworkserver.entitys.User;
+import org.server.socialnetworkserver.repositoris.CommentRepository;
 import org.server.socialnetworkserver.repositoris.LikeRepository;
 import org.server.socialnetworkserver.repositoris.PostRepository;
 import org.server.socialnetworkserver.repositoris.UserRepository;
@@ -27,13 +28,15 @@ public class PostService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final LikeRepository likeRepository;
+    private final CommentRepository commentRepository;
 
 
     @Autowired
-    public PostService(UserRepository userRepository, PostRepository postRepository,LikeRepository likeRepository) {
+    public PostService(UserRepository userRepository, PostRepository postRepository,LikeRepository likeRepository,CommentRepository commentRepository) {
         this.userRepository = userRepository;
         this.postRepository = postRepository;
         this.likeRepository = likeRepository;
+        this.commentRepository = commentRepository;
     }
 
 
@@ -118,7 +121,8 @@ public class PostService {
                         post.getImageUrl(),
                         post.getDate(),
                         likeRepository.isLikedByUser(post.getId(),user.getId()),
-                        likeRepository.countLikeByPost(post.getId())
+                        likeRepository.countLikeByPost(post.getId()),
+                        commentRepository.countCommentByPostId(post.getId())
                 ))
                 .toList();
 

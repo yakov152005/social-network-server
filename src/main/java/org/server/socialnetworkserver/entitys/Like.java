@@ -25,6 +25,10 @@ public class Like{
     @CreationTimestamp
     private Date likedAt;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id", nullable = true)
+    private Comment comment;
+
     public Like(Long id, Post post, User user, Date likedAt) {
         this.id = id;
         this.post = post;
