@@ -1,9 +1,11 @@
 package org.server.socialnetworkserver.controllers;
 import org.server.socialnetworkserver.responses.AllFollowResponse;
 import org.server.socialnetworkserver.responses.BasicResponse;
+import org.server.socialnetworkserver.responses.FollowResponse;
 import org.server.socialnetworkserver.responses.ProfileResponse;
 import org.server.socialnetworkserver.services.FollowService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
 
 import static org.server.socialnetworkserver.utils.Constants.UrlClient.URL_SERVER;
@@ -38,6 +40,11 @@ public class FollowController {
     @DeleteMapping("/unfollow/{username}&{currentUsername}")
     public BasicResponse unfollowUser(@PathVariable String username, @PathVariable String currentUsername) {
         return followService.unfollowUser(username, currentUsername);
+    }
+
+    @GetMapping("/get-all-followers-following/{username}")
+    private FollowResponse getAllFollowersAndFollowing(@PathVariable String username){
+        return followService.getFollower(username);
     }
 
 

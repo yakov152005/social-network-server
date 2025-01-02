@@ -10,6 +10,7 @@ import org.server.socialnetworkserver.dtos.ChatUserDto;
 import org.server.socialnetworkserver.responses.ChatUserResponse;
 import org.server.socialnetworkserver.responses.MessageDtoResponse;
 import org.server.socialnetworkserver.responses.MessageResponse;
+import org.server.socialnetworkserver.utils.ApiChatGpt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +48,8 @@ public class MessageService {
                         message.getSentAt()
                 )).toList();
 
+
+
         return new MessageDtoResponse(true,"All message history send.",messageDtos);
     }
 
@@ -71,10 +74,20 @@ public class MessageService {
                 message.getReceiver().getUsername(),
                 message.getReceiver().getProfilePicture(),
                 message.getContent(),
-                message.isRead(),
+                message.  isRead(),
                 message.getSentAt()
         );
 
+
+        if ("chatGpt".equals(receiverUsername)) {
+            try {
+                String chatGptResponse = ApiChatGpt.getResponseFromServer(content);
+                sendMessage("chatGpt", senderUsername, chatGptResponse);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new MessageResponse(false, "Failed to get response from ChatGPT.", null);
+            }
+        }
 
         streamController.notifyUser(receiverUsername,messageDto);
         return new MessageResponse(true,"Message send successfully.",messageDto);

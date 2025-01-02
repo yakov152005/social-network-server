@@ -1,11 +1,15 @@
 package org.server.socialnetworkserver.repositoris;
 
+import org.server.socialnetworkserver.dtos.FollowDto;
 import org.server.socialnetworkserver.entitys.Follow;
 import org.server.socialnetworkserver.entitys.User;
+import org.server.socialnetworkserver.responses.FollowResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
@@ -32,6 +36,13 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
             WHERE f.follower.username = :username
             """)
     int countFollowing(@Param("username") String username);
+
+
+    @Query("SELECT new org.server.socialnetworkserver.dtos.FollowDto(f.follower.username, f.follower.profilePicture) FROM Follow f WHERE f.following.username = :username")
+    List<FollowDto> getAllFollowers(@Param("username") String username);
+
+    @Query("SELECT new org.server.socialnetworkserver.dtos.FollowDto(f.following.username, f.following.profilePicture) FROM Follow f WHERE f.follower.username = :username")
+    List<FollowDto> getAllFollowing(@Param("username") String username);
 
 
     /**

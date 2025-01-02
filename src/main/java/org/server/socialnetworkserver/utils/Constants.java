@@ -14,6 +14,12 @@ public class Constants {
         public static final String URL_TEST = dotenv.get("URL_TEST");
     }
 
+    public class ChatGpt{
+        public static final String ID_GPT = dotenv.get("ID_GPT");
+        public static final String PATH = dotenv.get("PATH");
+        public static final String SEND_MESSAGE = PATH + "/send-message";
+    }
+
     public class UrlClient{
         public static final String URL_SERVER = "/social-network";
         public static final String URL_CLIENT_PC = dotenv.get("URL_CLIENT_PC");

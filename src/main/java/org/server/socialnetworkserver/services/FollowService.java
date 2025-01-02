@@ -1,6 +1,7 @@
 package org.server.socialnetworkserver.services;
 
 import jakarta.transaction.Transactional;
+import org.server.socialnetworkserver.dtos.FollowDto;
 import org.server.socialnetworkserver.dtos.PostDto;
 import org.server.socialnetworkserver.dtos.ProfileDto;
 import org.server.socialnetworkserver.entitys.Follow;
@@ -12,6 +13,7 @@ import org.server.socialnetworkserver.repositoris.PostRepository;
 import org.server.socialnetworkserver.repositoris.UserRepository;
 import org.server.socialnetworkserver.responses.AllFollowResponse;
 import org.server.socialnetworkserver.responses.BasicResponse;
+import org.server.socialnetworkserver.responses.FollowResponse;
 import org.server.socialnetworkserver.responses.ProfileResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,6 +50,7 @@ public class FollowService {
 
         return new AllFollowResponse(true,"All number of followers and following by username.",followers,following);
     }
+
 
 
 
@@ -88,6 +91,19 @@ public class FollowService {
         );
 
         return new ProfileResponse(true,"Profile response success.",profileDto);
+    }
+
+    public FollowResponse getFollower(@PathVariable String username){
+       List<FollowDto> getAllFollowers = followRepository.getAllFollowers(username);
+       List<FollowDto> getAllFollowing = followRepository.getAllFollowing(username);
+
+       if ((getAllFollowers.isEmpty() && getAllFollowing.isEmpty())){
+           return new FollowResponse(false,"Empty followers and following",null,null);
+       }
+
+
+
+       return new FollowResponse(true,"Success get followers and following",getAllFollowers,getAllFollowing);
     }
 
 

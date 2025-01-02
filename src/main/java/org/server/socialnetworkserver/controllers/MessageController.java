@@ -1,6 +1,4 @@
 package org.server.socialnetworkserver.controllers;
-
-import org.server.socialnetworkserver.dtos.ChatUserDto;
 import org.server.socialnetworkserver.responses.ChatUserResponse;
 import org.server.socialnetworkserver.responses.MessageDtoResponse;
 import org.server.socialnetworkserver.responses.MessageResponse;
@@ -8,8 +6,6 @@ import org.server.socialnetworkserver.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-
-import java.util.List;
 
 import static org.server.socialnetworkserver.utils.Constants.UrlClient.URL_SERVER;
 
