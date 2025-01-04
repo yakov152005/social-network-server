@@ -44,8 +44,8 @@ public class PostService {
         String content = postDetails.get("content");
         String imageUrl = postDetails.get("imageUrl");
 
-        if (content == null || content.isEmpty()) {
-            return new BasicResponse(false, "Content is Empty.");
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            return new BasicResponse(false, "Image is Empty.");
         }
 
         User user = userRepository.findByUsername(username);
@@ -122,7 +122,8 @@ public class PostService {
                         post.getDate(),
                         likeRepository.isLikedByUser(post.getId(),user.getId()),
                         likeRepository.countLikeByPost(post.getId()),
-                        commentRepository.countCommentByPostId(post.getId())
+                        commentRepository.countCommentByPostId(post.getId()),
+                        likeRepository.findAllLikesByPostId(post.getId())
                 ))
                 .toList();
 

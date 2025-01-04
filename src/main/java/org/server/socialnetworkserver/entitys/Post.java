@@ -21,7 +21,7 @@ public class Post {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = true, length = 2048)
+    @Column(nullable = false, length = 2048)
     private String imageUrl;
 
     @Column(nullable = false, updatable = false)

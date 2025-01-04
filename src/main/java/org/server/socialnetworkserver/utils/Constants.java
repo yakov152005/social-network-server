@@ -16,8 +16,8 @@ public class Constants {
 
     public class ChatGpt{
         public static final String ID_GPT = dotenv.get("ID_GPT");
-        public static final String PATH = dotenv.get("PATH");
-        public static final String SEND_MESSAGE = PATH + "/send-message";
+        public static final String SEND_MESSAGE = dotenv.get("PATH_SEND_MESSAGE");
+
     }
 
     public class UrlClient{

@@ -1,15 +1,19 @@
 package org.server.socialnetworkserver.services;
 
+import org.server.socialnetworkserver.dtos.LikeDto;
 import org.server.socialnetworkserver.entitys.Like;
 import org.server.socialnetworkserver.entitys.Post;
 import org.server.socialnetworkserver.entitys.User;
 import org.server.socialnetworkserver.repositoris.LikeRepository;
 import org.server.socialnetworkserver.repositoris.PostRepository;
 import org.server.socialnetworkserver.repositoris.UserRepository;
+import org.server.socialnetworkserver.responses.AllLikesResponse;
 import org.server.socialnetworkserver.responses.BasicResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
 
 @Service
 public class LikeService {
@@ -63,7 +67,16 @@ public class LikeService {
         return likeRepository.countLikeByPost(postId);
     }
 
+    public AllLikesResponse getAllLikesPost(@PathVariable Long postId){
+        Post post = postRepository.findById(postId).orElse(null);
+        if (post == null){
+            return new AllLikesResponse(false,"The post not exist.",null);
+        }
 
+        List<LikeDto> likeDtos = likeRepository.findAllLikesByPostId(postId);
+
+        return new AllLikesResponse(true,"All likes send.",likeDtos);
+    }
 
 
 }

@@ -1,6 +1,7 @@
 package org.server.socialnetworkserver.dtos;
 
 import java.util.Date;
+import java.util.List;
 
 public class PostDto {
     private long id;
@@ -12,6 +13,7 @@ public class PostDto {
     boolean isLikedByUser;
     private int likesCount;
     private int commentCount;
+    private List<LikeDto> likes;
 
     public PostDto(long id,String username, String profilePicture,String content, String imageUrl, Date date, boolean isLikedByUser, int likesCount) {
         this.id = id;
@@ -36,6 +38,27 @@ public class PostDto {
         this.commentCount = commentCount;
     }
 
+    public PostDto(long id, String username, String profilePicture, String content, String imageUrl, Date date, boolean isLikedByUser, int likesCount, int commentCount, List<LikeDto> likes) {
+        this.id = id;
+        this.username = username;
+        this.profilePicture = profilePicture;
+        this.content = content;
+        this.imageUrl = imageUrl;
+        this.date = date;
+        this.isLikedByUser = isLikedByUser;
+        this.likesCount = likesCount;
+        this.commentCount = commentCount;
+        this.likes = likes;
+    }
+
+
+    public List<LikeDto> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List<LikeDto> likes) {
+        this.likes = likes;
+    }
     public long getId() {
         return id;
     }

@@ -1,5 +1,6 @@
 package org.server.socialnetworkserver.controllers;
 
+import org.server.socialnetworkserver.responses.AllLikesResponse;
 import org.server.socialnetworkserver.responses.BasicResponse;
 import org.server.socialnetworkserver.services.LikeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,4 +34,8 @@ public class LikeController {
         return likeService.countLikes(postId);
     }
 
+    @GetMapping("/get-all-likes-post/{postId}")
+    public AllLikesResponse getAllLikesPost(@PathVariable Long postId){
+        return likeService.getAllLikesPost(postId);
+    }
 }

@@ -25,8 +25,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findPostsByUsername(@Param("currentUsername") String username);
 
     @Query("""
-                SELECT p FROM Post p 
-                WHERE p.user.username = :username 
+                SELECT p FROM Post p
+                WHERE p.user.username = :username
                 OR p.user IN (
                     SELECT f.following FROM Follow f WHERE f.follower.username = :username
                 )
