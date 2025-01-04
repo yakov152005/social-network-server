@@ -167,7 +167,9 @@ public class UserService {
             return response;
         }
         String username = JwtUtils.extractUsername(cleanToken);
+        String profilePicture = userRepository.findByUsername(username).getProfilePicture();
         response.put("username", username);
+        response.put("profilePicture",profilePicture);
 
         return response;
     }
@@ -212,15 +214,6 @@ public class UserService {
         }
 
         return new BasicResponse(false, "Add profile pic NOT success.");
-    }
-
-
-    public ProfilePictureResponse getProfilePictureByUsername(@PathVariable String username) {
-        User user = userRepository.findByUsername(username);
-        if (user != null) {
-            return new ProfilePictureResponse(true, "Success send profile pic", user.getProfilePicture());
-        }
-        return new ProfilePictureResponse(false, "Not success", null);
     }
 
 

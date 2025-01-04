@@ -61,11 +61,6 @@ public class UserController {
         return userService.addProfilePicture(addPicProfile);
     }
 
-    @GetMapping("/get-profile-pic/{username}")
-    public ProfilePictureResponse getProfilePictureByUsername(@PathVariable String username) {
-       return userService.getProfilePictureByUsername(username);
-    }
-
     @GetMapping("/get-all-user-names-and-pic")
     public UserNamesWithPicResponse getAllUserNamesAndPic() {
         return userService.getAllUserNamesAndPic();

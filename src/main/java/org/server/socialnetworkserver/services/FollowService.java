@@ -7,10 +7,7 @@ import org.server.socialnetworkserver.dtos.ProfileDto;
 import org.server.socialnetworkserver.entitys.Follow;
 import org.server.socialnetworkserver.entitys.Post;
 import org.server.socialnetworkserver.entitys.User;
-import org.server.socialnetworkserver.repositoris.FollowRepository;
-import org.server.socialnetworkserver.repositoris.LikeRepository;
-import org.server.socialnetworkserver.repositoris.PostRepository;
-import org.server.socialnetworkserver.repositoris.UserRepository;
+import org.server.socialnetworkserver.repositoris.*;
 import org.server.socialnetworkserver.responses.AllFollowResponse;
 import org.server.socialnetworkserver.responses.BasicResponse;
 import org.server.socialnetworkserver.responses.FollowResponse;
@@ -29,13 +26,15 @@ public class FollowService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final LikeRepository likeRepository;
+    private final CommentRepository commentRepository;
 
     @Autowired
-    public FollowService(FollowRepository followRepository, UserRepository userRepository,PostRepository postRepository,LikeRepository likeRepository ) {
+    public FollowService(FollowRepository followRepository, UserRepository userRepository,PostRepository postRepository,LikeRepository likeRepository,CommentRepository commentRepository ) {
         this.followRepository = followRepository;
         this.userRepository = userRepository;
         this.postRepository = postRepository;
         this.likeRepository = likeRepository;
+        this.commentRepository = commentRepository;
     }
 
 
@@ -77,7 +76,8 @@ public class FollowService {
                         post.getImageUrl(),
                         post.getDate(),
                         likeRepository.isLikedByUser(post.getId(),currentUser.getId()),
-                        likeRepository.countLikeByPost(post.getId())
+                        likeRepository.countLikeByPost(post.getId()),
+                        commentRepository.countCommentByPostId(post.getId())
                         ))
                 .toList();
 

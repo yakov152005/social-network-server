@@ -81,7 +81,8 @@ public class PostService {
                         post.getImageUrl(),
                         post.getDate(),
                         likeRepository.isLikedByUser(post.getId(),user.getId()),
-                        likeRepository.countLikeByPost(post.getId())
+                        likeRepository.countLikeByPost(post.getId()),
+                        commentRepository.countCommentByPostId(post.getId())
                 ))
                 .toList();
 
