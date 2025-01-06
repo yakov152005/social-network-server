@@ -1,14 +1,19 @@
 package org.server.socialnetworkserver.services;
 
+import org.server.socialnetworkserver.controllers.NotificationController;
 import org.server.socialnetworkserver.dtos.LikeDto;
+import org.server.socialnetworkserver.dtos.NotificationDto;
 import org.server.socialnetworkserver.entitys.Like;
+import org.server.socialnetworkserver.entitys.Notification;
 import org.server.socialnetworkserver.entitys.Post;
 import org.server.socialnetworkserver.entitys.User;
 import org.server.socialnetworkserver.repositoris.LikeRepository;
+import org.server.socialnetworkserver.repositoris.NotificationRepository;
 import org.server.socialnetworkserver.repositoris.PostRepository;
 import org.server.socialnetworkserver.repositoris.UserRepository;
 import org.server.socialnetworkserver.responses.AllLikesResponse;
 import org.server.socialnetworkserver.responses.BasicResponse;
+import org.server.socialnetworkserver.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,15 +23,21 @@ import java.util.List;
 @Service
 public class LikeService {
 
+
     private final LikeRepository likeRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final NotificationRepository notificationRepository;
+    private final NotificationController notificationController;
+
 
     @Autowired
-    public LikeService(LikeRepository likeRepository,UserRepository userRepository,PostRepository postRepository){
+    public LikeService(LikeRepository likeRepository,UserRepository userRepository,PostRepository postRepository,NotificationRepository notificationRepository,NotificationController notificationController){
         this.likeRepository = likeRepository;
         this.userRepository = userRepository;
         this.postRepository = postRepository;
+        this.notificationRepository = notificationRepository;
+        this.notificationController = notificationController;
     }
 
     public BasicResponse likePost(@PathVariable Long postId, @PathVariable String username){
@@ -46,6 +57,23 @@ public class LikeService {
         like.setPost(post);
         like.setUser(user);
         likeRepository.save(like);
+
+        Notification notification = new Notification(post.getId(),post.getImageUrl(),post.getUser(),user,user.getProfilePicture(), Constants.Notification.LIKE);
+        notificationRepository.save(notification);
+
+        NotificationDto notificationDto = new NotificationDto(
+                notification.getId(),
+                post.getId(),
+                post.getImageUrl(),
+                post.getUser().getUsername(),
+                user.getUsername(),
+                user.getProfilePicture(),
+                Constants.Notification.LIKE,
+                notification.getDate(),
+                notification.isRead()
+        );
+
+        notificationController.sendNotification(post.getUser().getUsername(),notificationDto);
 
         return new BasicResponse(true, "Post liked successfully.");
     }

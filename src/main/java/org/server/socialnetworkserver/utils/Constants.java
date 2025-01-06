@@ -1,10 +1,6 @@
 package org.server.socialnetworkserver.utils;
 import io.github.cdimascio.dotenv.Dotenv;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 
 public class Constants {
 
@@ -45,6 +41,12 @@ public class Constants {
         public static final String SMS_SENDER = "NETWORKAPI";
         public static final String SMS_TOKEN = dotenv.get("SMS_TOKEN");
         public static final String URL_SMS = "https://capi.inforu.co.il/api/v2/SMS/SendSms";
+    }
+
+    public class Notification {
+        public static final String FOLLOW = "follow";
+        public static final String LIKE = "like";
+        public static final String COMMENT = "comment";
     }
 
     public class Errors{

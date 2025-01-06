@@ -1,15 +1,20 @@
 package org.server.socialnetworkserver.services;
 
+import org.server.socialnetworkserver.controllers.NotificationController;
 import org.server.socialnetworkserver.dtos.CommentDto;
+import org.server.socialnetworkserver.dtos.NotificationDto;
 import org.server.socialnetworkserver.entitys.Comment;
+import org.server.socialnetworkserver.entitys.Notification;
 import org.server.socialnetworkserver.entitys.Post;
 import org.server.socialnetworkserver.entitys.User;
 import org.server.socialnetworkserver.repositoris.CommentRepository;
+import org.server.socialnetworkserver.repositoris.NotificationRepository;
 import org.server.socialnetworkserver.repositoris.PostRepository;
 import org.server.socialnetworkserver.repositoris.UserRepository;
 import org.server.socialnetworkserver.responses.AllCommentsResponse;
 import org.server.socialnetworkserver.responses.BasicResponse;
 import org.server.socialnetworkserver.responses.CommentResponse;
+import org.server.socialnetworkserver.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,12 +29,18 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final NotificationRepository notificationRepository;
+    private final NotificationController notificationController;
 
     @Autowired
-    public CommentService(CommentRepository commentRepository,UserRepository userRepository, PostRepository postRepository){
+    public CommentService(CommentRepository commentRepository,
+                          UserRepository userRepository, PostRepository postRepository,
+                          NotificationRepository notificationRepository, NotificationController notificationController){
         this.commentRepository = commentRepository;
         this.userRepository = userRepository;
         this.postRepository = postRepository;
+        this.notificationRepository = notificationRepository;
+        this.notificationController = notificationController;
     }
 
     public BasicResponse addComments(@RequestBody CommentResponse commentResponse ){
@@ -46,8 +57,26 @@ public class CommentService {
         comment.setContent(commentResponse.getContent());
         commentRepository.save(comment);
 
+        Notification notification = new Notification(post.getId(),post.getImageUrl(),post.getUser(),user,user.getProfilePicture(), Constants.Notification.COMMENT);
+        notificationRepository.save(notification);
+
+        NotificationDto notificationDto = new NotificationDto(
+                notification.getId(),
+                post.getId(),
+                post.getImageUrl(),
+                post.getUser().getUsername(),
+                user.getUsername(),
+                user.getProfilePicture(),
+                Constants.Notification.COMMENT,
+                notification.getDate(),
+                notification.isRead()
+        );
+
+        notificationController.sendNotification(post.getUser().getUsername(),notificationDto);
+
         return new BasicResponse(true,"Add comment success.");
     }
+
 
     public AllCommentsResponse getAllCommentPost(@PathVariable Long postId){
         List<CommentDto> comments = commentRepository.findAllCommentByPostId(postId);

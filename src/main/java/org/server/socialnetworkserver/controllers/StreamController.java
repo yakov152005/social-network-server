@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-@RestController()
+@RestController
 @RequestMapping("/sse")
 public class StreamController {
 
@@ -108,28 +108,5 @@ public class StreamController {
             System.out.println("No active connection for user: " + receiverUsername);
         }
     }
-
-
-
-    /*
-   public void notifyUser(String receiverUsername, MessageDto messageDto) {
-        List<SseEmitter> emitters = userEmitters.get(receiverUsername);
-        if (emitters != null) {
-            for (Iterator<SseEmitter> iterator = emitters.iterator(); iterator.hasNext(); ) {
-                SseEmitter emitter = iterator.next();
-                try {
-                    emitter.send(SseEmitter.event()
-                            .name("newMessage")
-                            .data(messageDto));
-                } catch (IOException e) {
-                    iterator.remove();
-                    System.out.println("חיבור נסגר");
-                }
-            }
-        } else {
-            System.out.println("No active connection for user: " + receiverUsername);
-        }
-    }
-     */
 
 }
