@@ -9,6 +9,7 @@ public class NotificationDto {
     private String recipient;
     private String initiator;
     private String initiatorProfilePicture;
+    private String content;
     private String type;
     private Date date;
     private boolean isRead;
@@ -21,6 +22,19 @@ public class NotificationDto {
         this.recipient = recipient;
         this.initiator = initiator;
         this.initiatorProfilePicture = initiatorProfilePicture;
+        this.type = type;
+        this.date = date;
+        this.isRead = isRead;
+    }
+
+    public NotificationDto(long id, Long postId, String postImg, String recipient, String initiator, String initiatorProfilePicture,String content, String type, Date date, boolean isRead) {
+        this.id = id;
+        this.postId = postId;
+        this.postImg = postImg;
+        this.recipient = recipient;
+        this.initiator = initiator;
+        this.initiatorProfilePicture = initiatorProfilePicture;
+        this.content = content;
         this.type = type;
         this.date = date;
         this.isRead = isRead;
@@ -88,6 +102,14 @@ public class NotificationDto {
         this.initiatorProfilePicture = initiatorProfilePicture;
     }
 
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     public String getType() {
         return type;
     }
@@ -121,6 +143,7 @@ public class NotificationDto {
                ", recipient='" + recipient + '\'' +
                ", initiator='" + initiator + '\'' +
                ", initiatorProfilePicture='" + initiatorProfilePicture + '\'' +
+               ", content='" + content + '\'' +
                ", type='" + type + '\'' +
                ", date=" + date +
                ", isRead=" + isRead +

@@ -57,22 +57,25 @@ public class CommentService {
         comment.setContent(commentResponse.getContent());
         commentRepository.save(comment);
 
-        Notification notification = new Notification(post.getId(),post.getImageUrl(),post.getUser(),user,user.getProfilePicture(), Constants.Notification.COMMENT);
-        notificationRepository.save(notification);
+        if (!(post.getUser().getUsername().equals(user.getUsername()))){
+            Notification notification = new Notification(post.getId(),post.getImageUrl(),post.getUser(),user,user.getProfilePicture(),commentResponse.getContent(), Constants.Notification.COMMENT);
+            notificationRepository.save(notification);
 
-        NotificationDto notificationDto = new NotificationDto(
-                notification.getId(),
-                post.getId(),
-                post.getImageUrl(),
-                post.getUser().getUsername(),
-                user.getUsername(),
-                user.getProfilePicture(),
-                Constants.Notification.COMMENT,
-                notification.getDate(),
-                notification.isRead()
-        );
+            NotificationDto notificationDto = new NotificationDto(
+                    notification.getId(),
+                    post.getId(),
+                    post.getImageUrl(),
+                    post.getUser().getUsername(),
+                    user.getUsername(),
+                    user.getProfilePicture(),
+                    commentResponse.getContent(),
+                    Constants.Notification.COMMENT,
+                    notification.getDate(),
+                    notification.isRead()
+            );
 
-        notificationController.sendNotification(post.getUser().getUsername(),notificationDto);
+            notificationController.sendNotification(post.getUser().getUsername(),notificationDto);
+        }
 
         return new BasicResponse(true,"Add comment success.");
     }

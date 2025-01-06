@@ -155,11 +155,6 @@ public class FollowService {
                 notification.isRead()
         );
 
-        System.out.println(notificationDto);
-        System.out.println(userToFollow.getUsername() + " " + username );
-        System.out.println(currentUsername + " " + currentUser.getUsername());
-
-
         notificationController.sendNotification(userToFollow.getUsername(),notificationDto);
 
         return new BasicResponse(true,"Followed successfully!");

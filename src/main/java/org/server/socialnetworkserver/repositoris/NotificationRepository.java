@@ -18,6 +18,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
                     n.recipient.username,
                     n.initiator.username,
                     n.initiator.profilePicture,
+                    n.content,
                     n.type,
                     n.date,
                     n.isRead

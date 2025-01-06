@@ -29,9 +29,12 @@ public class Notification {
     @Column(nullable = true)
     private String initiatorProfilePicture;
 
+    @Column(nullable = true, length = 200)
+    private String content;
+
+
     @Column(nullable = false)
     private String type;
-
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
@@ -46,6 +49,16 @@ public class Notification {
         this.recipient = recipient;
         this.initiator = initiator;
         this.initiatorProfilePicture = initiatorProfilePicture;
+        this.type = type;
+    }
+
+    public Notification(Long postId, String postImg, User recipient, User initiator, String initiatorProfilePicture,String content, String type) {
+        this.postId = postId;
+        this.postImg = postImg;
+        this.recipient = recipient;
+        this.initiator = initiator;
+        this.initiatorProfilePicture = initiatorProfilePicture;
+        this.content = content;
         this.type = type;
     }
 
@@ -101,6 +114,14 @@ public class Notification {
 
     public void setInitiatorProfilePicture(String initiatorProfilePicture) {
         this.initiatorProfilePicture = initiatorProfilePicture;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getPostImg() {

@@ -58,22 +58,24 @@ public class LikeService {
         like.setUser(user);
         likeRepository.save(like);
 
-        Notification notification = new Notification(post.getId(),post.getImageUrl(),post.getUser(),user,user.getProfilePicture(), Constants.Notification.LIKE);
-        notificationRepository.save(notification);
+      if (!(post.getUser().getUsername().equals(user.getUsername()))){
+          Notification notification = new Notification(post.getId(),post.getImageUrl(),post.getUser(),user,user.getProfilePicture(), Constants.Notification.LIKE);
+          notificationRepository.save(notification);
 
-        NotificationDto notificationDto = new NotificationDto(
-                notification.getId(),
-                post.getId(),
-                post.getImageUrl(),
-                post.getUser().getUsername(),
-                user.getUsername(),
-                user.getProfilePicture(),
-                Constants.Notification.LIKE,
-                notification.getDate(),
-                notification.isRead()
-        );
+          NotificationDto notificationDto = new NotificationDto(
+                  notification.getId(),
+                  post.getId(),
+                  post.getImageUrl(),
+                  post.getUser().getUsername(),
+                  user.getUsername(),
+                  user.getProfilePicture(),
+                  Constants.Notification.LIKE,
+                  notification.getDate(),
+                  notification.isRead()
+          );
 
-        notificationController.sendNotification(post.getUser().getUsername(),notificationDto);
+          notificationController.sendNotification(post.getUser().getUsername(),notificationDto);
+      }
 
         return new BasicResponse(true, "Post liked successfully.");
     }
