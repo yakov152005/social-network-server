@@ -1,11 +1,9 @@
 package org.server.socialnetworkserver.services;
 
 import org.server.socialnetworkserver.dtos.UsernameWithPicDto;
+import org.server.socialnetworkserver.entitys.LoginActivity;
 import org.server.socialnetworkserver.entitys.User;
-import org.server.socialnetworkserver.repositoris.LikeRepository;
-import org.server.socialnetworkserver.repositoris.MessageRepository;
-import org.server.socialnetworkserver.repositoris.PostRepository;
-import org.server.socialnetworkserver.repositoris.UserRepository;
+import org.server.socialnetworkserver.repositoris.*;
 import org.server.socialnetworkserver.responses.*;
 import org.server.socialnetworkserver.utils.ApiSmsSender;
 import org.server.socialnetworkserver.utils.JwtUtils;
@@ -31,14 +29,19 @@ public class UserService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final MessageRepository messageRepository;
+    private final LoginActivityRepository loginActivityRepository;
     private final Map<String, String> verificationCodes = new HashMap<>();
 
     @Autowired
-    public UserService(LikeRepository likeRepository,UserRepository userRepository,PostRepository postRepository, MessageRepository messageRepository) {
+    public UserService(LikeRepository likeRepository,UserRepository userRepository,
+                       PostRepository postRepository, MessageRepository messageRepository,
+                       LoginActivityRepository loginActivityRepository
+    ) {
         this.likeRepository = likeRepository;
         this.userRepository = userRepository;
         this.postRepository = postRepository;
         this.messageRepository = messageRepository;
+        this.loginActivityRepository = loginActivityRepository;
     }
 
     public ValidationResponse addUser(@RequestBody User user) {
@@ -103,6 +106,27 @@ public class UserService {
     }
 
 
+    public Map<String, String> verifyCode(@RequestBody Map<String, String> verificationDetails) {
+        String username = verificationDetails.get("username");
+        String code = verificationDetails.get("code");
+
+        if (username != null && code != null && verificationCodes.containsKey(username)) {
+            if (verificationCodes.get(username).equals(code)) {
+                LoginActivity loginActivity = new LoginActivity();
+                loginActivity.setUser(userRepository.findByUsername(username));
+                loginActivityRepository.save(loginActivity);
+                verificationCodes.remove(username);
+                String token = JwtUtils.generateToken(username);
+                Map<String, String> response = new HashMap<>();
+                response.put("token", token);
+                response.put("message", "Login successful");
+                return response;
+            }
+        }
+        throw new RuntimeException("Invalid verification code");
+    }
+
+
     public BasicResponse changePassword(@RequestBody Map<String, String> changePasswordDetails) {
         String username = changePasswordDetails.get("username");
         String currentPassword = changePasswordDetails.get("currentPassword");
@@ -135,22 +159,6 @@ public class UserService {
     }
 
 
-    public Map<String, String> verifyCode(@RequestBody Map<String, String> verificationDetails) {
-        String username = verificationDetails.get("username");
-        String code = verificationDetails.get("code");
-
-        if (username != null && code != null && verificationCodes.containsKey(username)) {
-            if (verificationCodes.get(username).equals(code)) {
-                verificationCodes.remove(username);
-                String token = JwtUtils.generateToken(username);
-                Map<String, String> response = new HashMap<>();
-                response.put("token", token);
-                response.put("message", "Login successful");
-                return response;
-            }
-        }
-        throw new RuntimeException("Invalid verification code");
-    }
 
 
     public Map<String, Object> getUserDetails(@RequestHeader("Authorization") String token) {

@@ -28,15 +28,9 @@ public class User{
     @Column(nullable = true)
     private String profilePicture;
 
-    /**
-     * עוקבים אחרי
-     */
     @OneToMany(mappedBy = "following", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Follow> followers;
 
-    /**
-     * המשתמש עוקב
-     */
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Follow> following;
 

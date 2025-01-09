@@ -1,5 +1,6 @@
 package org.server.socialnetworkserver.utils;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.*;
 import java.util.Properties;
 import javax.mail.*;
@@ -31,7 +32,7 @@ public class ApiEmailProcessor {
 
         try {
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(SENDER_EMAIL));
+            message.setFrom(new InternetAddress(SENDER_EMAIL,PERSONAL));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
             message.setSubject(subject);
             //message.setText(content);
@@ -47,55 +48,9 @@ public class ApiEmailProcessor {
         } catch (MessagingException e) {
             System.out.println("Error sending email: " + e.getMessage());
             return false;
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
     }
 }
 
-/*
-
-    public static void main(String[] args) {
-        // processEmails();
-    }
-
-    public static void processEmails() {
-        try (Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://" + DB_HOST + ":3306/" + DB_NAME, DB_USER, DB_PASSWORD)) {
-            System.out.println("Database connection successful!");
-
-            while (true) {
-                String query = "SELECT id, email, title, body FROM USER";
-                try (PreparedStatement statement = connection.prepareStatement(query);
-                     ResultSet resultSet = statement.executeQuery()) {
-
-                    while (resultSet.next()) {
-                        int recordId = resultSet.getInt("id");
-                        String recipient = resultSet.getString("email");
-                        String subject = resultSet.getString("title");
-                        String content = resultSet.getString("body");
-
-                        System.out.println("Processing email record ID: " + recordId);
-
-                        if (sendEmail(recipient, subject, content)) {
-                            System.out.println("Email sent successfully for record ID: " + recordId);
-
-                            // Delete the record after successfully sending the email
-                            String deleteQuery = "DELETE FROM recovery WHERE id = ?";
-                            try (PreparedStatement deleteStatement = connection.prepareStatement(deleteQuery)) {
-                                deleteStatement.setInt(1, recordId);
-                                deleteStatement.executeUpdate();
-                                System.out.println("Record ID " + recordId + " deleted successfully.");
-                            }
-                        }
-                    }
-                }
-
-                // Wait for 1 second before checking the database again
-                Thread.sleep(1000);
-            }
-        } catch (SQLException e) {
-            System.out.println("Database error occurred: " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("Error occurred: " + e.getMessage());
-        }
-    }
-    */

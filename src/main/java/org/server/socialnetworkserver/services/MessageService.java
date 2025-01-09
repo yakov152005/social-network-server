@@ -74,7 +74,7 @@ public class MessageService {
                 message.getReceiver().getUsername(),
                 message.getReceiver().getProfilePicture(),
                 message.getContent(),
-                message.  isRead(),
+                message.isRead(),
                 message.getSentAt()
         );
 

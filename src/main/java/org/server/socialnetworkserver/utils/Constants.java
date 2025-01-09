@@ -33,6 +33,9 @@ public class Constants {
     public class EmailConstants{
         public static final String SENDER_EMAIL = dotenv.get("SENDER_EMAIL");
         public static final String SENDER_PASSWORD = dotenv.get("SENDER_PASSWORD");
+        public static final String PERSONAL = "Social Network";
+        public static final String TITLE = "Hey From Social Network";
+        public static final String CONTENT = "לא התחברת המון זמן, בוא לבקר אותנו :)";
         public static final String[] EMAILS_CONTAINS = {"walla.co.il", "walla.com", "gmail.com", "gmail.co.il", "edu.aac.ac.il"};
 
     }

@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 
-
+import java.util.Date;
 import java.util.List;
 
 
@@ -27,5 +27,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             (u.username, u.profilePicture) FROM User u
             """)
     List<UsernameWithPicDto> findAllUsernamesWithPic();
+
+    @Query("SELECT u FROM User u WHERE u NOT IN " +
+           "(SELECT l.user FROM LoginActivity l WHERE l.date >= :lastWeek)")
+    List<User> findUsersNotLoggedInLastWeek(@Param("lastWeek") Date lastWeek);
 
 }
