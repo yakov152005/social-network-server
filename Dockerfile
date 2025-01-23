@@ -1,4 +1,4 @@
-FROM maven:3.8.4-openjdk-17 as build
+FROM maven:3.8.4-openjdk-22 as build
 WORKDIR /SocialNetwork
 COPY . .
 RUN mvn clean package -DskipTests
