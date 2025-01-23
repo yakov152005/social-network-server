@@ -23,10 +23,10 @@ public class Constants {
 
     public static class UrlClient{
         public static final String URL_SERVER = "/social-network";
-        public static final String URL_CLIENT_PC = EnvironmentConfig.getProperty("URL_CLIENT_PC");
         /*
         public static final String URL_CLIENT_LAPTOP = dotenv.get("URL_CLIENT_LAPTOP");
          public static final String URL_CLIENT_PC = dotenv.get("URL_CLIENT_PC");
+         public static final String URL_CLIENT_PC = EnvironmentConfig.getProperty("URL_CLIENT_PC");
          */
 
     }
