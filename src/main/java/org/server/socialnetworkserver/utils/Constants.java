@@ -32,11 +32,16 @@ public class Constants {
     }
 
     /*
+
     public static class DataBase{
         public static final String DB_HOST = EnvironmentConfig.getProperty("DB_HOST");
         public static final String DB_USER = EnvironmentConfig.getProperty("DB_USER");
         public static final String DB_PASSWORD = EnvironmentConfig.getProperty("DB_PASSWORD");
         public static final String DB_NAME = EnvironmentConfig.getProperty("DB_NAME");
+        spring.datasource.url=${DB_URL}
+spring.datasource.username=${DB_USERNAME}
+spring.datasource.password=${DB_PASSWORD}
+spring.datasource.name=${DB_NAME}
     }
      */
 
