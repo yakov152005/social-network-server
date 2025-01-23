@@ -44,6 +44,16 @@ public class UserService {
         this.loginActivityRepository = loginActivityRepository;
     }
 
+    public TokenResponse validateToken(String cleanToken) {
+        boolean isValid = JwtUtils.isTokenValid(cleanToken);
+        String username = "";
+        if (isValid){
+            username = JwtUtils.extractUsername(cleanToken);
+        }
+
+        return new TokenResponse(isValid, isValid ? "Token is valid" : "Token is invalid", isValid,username);
+    }
+
     public ValidationResponse addUser(@RequestBody User user) {
         User newUser = userRepository.findByUsername(user.getUsername());
 

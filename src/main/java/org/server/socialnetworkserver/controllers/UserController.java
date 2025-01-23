@@ -3,6 +3,7 @@ import org.server.socialnetworkserver.responses.*;
 import org.server.socialnetworkserver.entitys.User;
 import org.server.socialnetworkserver.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -19,6 +20,19 @@ public class UserController {
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @PostMapping("/validateToken")
+    public ResponseEntity<TokenResponse> validateToken(@RequestHeader("Authorization") String token) {
+        if (token == null || token.isEmpty()) {
+            System.out.println("Token missing");
+            return ResponseEntity.badRequest().body(new TokenResponse(false, "Token is missing", false,null));
+        }
+
+        String cleanToken = token.replace("Bearer ", "");
+
+        TokenResponse response = userService.validateToken(cleanToken);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/add-user")

@@ -8,8 +8,9 @@ public class Constants {
     public static Dotenv dotenv = Dotenv.load();
 
     public static class ForTest{
-        public static final String URL_TEST = "http://localhost:8080/social-network/slow-endpoint";
+        public static final String URL_TEST = "https://social-network-server-m0ef.onrender.com/slow-endpoint";
         /*
+        public static final String URL_TEST = "http://localhost:8080/social-network/slow-endpoint";
         public static final String URL_TEST = dotenv.get("URL_TEST");
          */
     }
