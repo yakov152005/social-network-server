@@ -6,14 +6,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class EnvironmentConfig {
-    private static Environment env;
+    private final Environment env;
 
     @Autowired
-    public void setEnvironment(Environment environment) {
-        env = environment;
+    public EnvironmentConfig(Environment env) {
+        this.env = env;
     }
 
-    public static String getProperty(String key) {
+    public String getProperty(String key) {
         return env.getProperty(key);
     }
 }
