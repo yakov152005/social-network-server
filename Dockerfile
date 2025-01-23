@@ -4,7 +4,7 @@ COPY . .
 RUN mvn clean package -DskipTests
 
 
-ENV DB_URL=jdbc:mysql://root:VjpjomXubruhyFjbQCGgawFSBwtKyGvI@junction.proxy.rlwy.net:37113/railway
+ENV DB_URL=jdbc:mysql://junction.proxy.rlwy.net:37113/railway
 ENV DB_HOST=junction.proxy.rlwy.net
 ENV DB_USERNAME=root
 ENV DB_PASSWORD=VjpjomXubruhyFjbQCGgawFSBwtKyGvI
