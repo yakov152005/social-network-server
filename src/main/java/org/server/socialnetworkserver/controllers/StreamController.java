@@ -12,7 +12,6 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -65,6 +64,7 @@ public class StreamController {
                 emitter.send(SseEmitter.event()
                         .name("message")
                         .data("Current server time: " + date));
+                System.out.println("Current server time: " + date);
             } catch (IOException e) {
                 dateEmitters.remove(emitter);
                 System.out.println("זיהה ריענון שרת/יציאה מהשרת");

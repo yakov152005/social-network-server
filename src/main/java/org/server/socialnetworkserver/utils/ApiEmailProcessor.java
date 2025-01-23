@@ -1,12 +1,10 @@
 package org.server.socialnetworkserver.utils;
 
 import java.io.UnsupportedEncodingException;
-import java.sql.*;
 import java.util.Properties;
 import javax.mail.*;
 import javax.mail.internet.*;
 
-import static org.server.socialnetworkserver.utils.Constants.DataBase.*;
 import static org.server.socialnetworkserver.utils.Constants.EmailConstants.*;
 
 public class ApiEmailProcessor {

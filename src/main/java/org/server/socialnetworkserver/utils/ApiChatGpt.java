@@ -15,28 +15,10 @@ import org.apache.http.util.EntityUtils;
 import static org.server.socialnetworkserver.utils.Constants.ChatGpt.*;
 
 
-
 public class ApiChatGpt {
-
 
     private static final CloseableHttpClient client = HttpClients.createDefault();
     private static final ObjectMapper mapper = new ObjectMapper();
-
-
-    /*
-     public static void main(String[] args) throws IOException, URISyntaxException {
-        String text = "מתי קיץ בישראל";
-        String response1 = getResponseFromServer(text);
-
-        String text2 = "ובניורק?";
-        String response2 = getResponseFromServer(text2);
-        System.out.println(text);
-        System.out.println(response1);
-        System.out.println(text2);
-        System.out.println(response2);
-
-    }
-     */
 
     public static String getResponseFromServer(String  conversation) throws URISyntaxException, IOException {
         URI uri = new URIBuilder(SEND_MESSAGE)

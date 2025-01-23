@@ -15,7 +15,7 @@
 	<description>social-network-server</description>
 
 	<properties>
-		<java.version>23</java.version>
+		<java.version>22</java.version>
 	</properties>
 
 	<dependencies>
@@ -129,6 +129,7 @@
     </dependencies>
 
 	<build>
+		<finalName>SocialNetwork</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

@@ -11,14 +11,16 @@ import static org.server.socialnetworkserver.utils.Constants.UrlClient.URL_CLIEN
 public class CorsConfig {
     @Bean(name = "customCorsConfig")
     public WebMvcConfigurer corsConfig(){
+        System.out.println("CORS configuration is being initialized...");
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**") 
+                registry.addMapping("/**")
                         .allowedOrigins(URL_CLIENT_PC)
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*") 
-                        .allowCredentials(true); 
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
+                System.out.println("CORS mapping added for origin: http://localhost:3000");
             }
         };
     }
