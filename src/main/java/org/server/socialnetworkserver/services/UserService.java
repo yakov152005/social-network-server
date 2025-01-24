@@ -44,6 +44,11 @@ public class UserService {
         this.loginActivityRepository = loginActivityRepository;
     }
 
+    public BasicResponse getNumOfUsers(){
+        String numOfUsers = String.valueOf(userRepository.findAll().size());
+        return new BasicResponse(true,numOfUsers);
+    }
+
     public TokenResponse validateToken(String cleanToken) {
         boolean isValid = JwtUtils.isTokenValid(cleanToken);
         String username = "";

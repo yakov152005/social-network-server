@@ -22,6 +22,11 @@ public class UserController {
         this.userService = userService;
     }
 
+    @GetMapping("/get-num-of-users")
+    public BasicResponse getNumOfUsers(){
+        return userService.getNumOfUsers();
+    }
+
     @PostMapping("/validateToken")
     public ResponseEntity<TokenResponse> validateToken(@RequestHeader("Authorization") String token) {
         if (token == null || token.isEmpty()) {
