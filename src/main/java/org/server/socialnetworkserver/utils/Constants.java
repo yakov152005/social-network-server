@@ -9,7 +9,8 @@ public class Constants {
     public static Dotenv dotenv = Dotenv.load();
 
     public static class ForTest{
-        public static final String URL_TEST = "https://social-network-server-m0ef.onrender.com/slow-endpoint";
+      public static final String URL_TEST = "https://social-network-server-m0ef.onrender.com/slow-endpoint";
+      // public static final String URL_TEST = dotenv.get("URL_TEST");
     }
 
     public static class ChatGpt{
@@ -17,8 +18,10 @@ public class Constants {
         public static final String SEND_MESSAGE = "https://app.seker.live/fm1/send-message";
     }
 
+
     public static class UrlClient{
         public static final String URL_SERVER = "/social-network";
+        // public static final String URL_CLIENT_PC = dotenv.get("URL_CLIENT_PC");
         public static final String URL_CLIENT_PC = "https://social-network-client-k8fp.onrender.com";
     }
 
@@ -26,8 +29,8 @@ public class Constants {
         public static final String SENDER_EMAIL = "servicenetwork62@gmail.com";
         public static final String SENDER_PASSWORD = "sinh araw dtpo vqoe";
         public static final String PERSONAL = "Social Network";
-        public static final String TITLE = "Hey From Social Network";
-        public static final String CONTENT = "לא התחברת המון זמן, בוא לבקר אותנו :)";
+        public static final String TITLE = "מה קורה ";
+        public static final String CONTENT = "💟 לא התחברת המון זמן, בוא לבקר אותנו ";
         public static final String[] EMAILS_CONTAINS = {"walla.co.il", "walla.com", "gmail.com", "gmail.co.il", "edu.aac.ac.il"};
     }
 

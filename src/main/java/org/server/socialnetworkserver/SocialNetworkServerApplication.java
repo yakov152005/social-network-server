@@ -11,7 +11,7 @@ public class SocialNetworkServerApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SocialNetworkServerApplication.class, args);
-		System.out.println("Hello"+ new Date());
+		System.out.println("Hello From Server "+ new Date());
 	}
 
 }

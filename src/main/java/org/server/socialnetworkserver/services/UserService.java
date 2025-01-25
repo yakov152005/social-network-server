@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +84,7 @@ public class UserService {
                 .append("Email: ").append(user.getEmail());
         System.out.println(userDetails);
         System.out.println(sendEmail(user.getEmail(), "Details", userDetails.toString()));
-        // System.out.println(sendEmail("yakov152005@walla.co.il","Details",userDetails.toString()));
+
 
         String salt = generateSalt();
         String hashedPassword = hashPassword(user.getPassword(), salt);
@@ -127,9 +128,21 @@ public class UserService {
 
         if (username != null && code != null && verificationCodes.containsKey(username)) {
             if (verificationCodes.get(username).equals(code)) {
-                LoginActivity loginActivity = new LoginActivity();
-                loginActivity.setUser(userRepository.findByUsername(username));
-                loginActivityRepository.save(loginActivity);
+                LoginActivity session = loginActivityRepository.findByUsername(username);
+
+
+                if (session != null){
+                    System.out.println(session.getUser().getUsername()  + "current session");
+                    session.setUser(session.getUser());
+                    session.setDate(new Date());
+                    loginActivityRepository.save(session);
+                }else {
+                    LoginActivity newSession = new LoginActivity();
+                    newSession.setUser(userRepository.findByUsername(username));
+                    System.out.println(newSession.getUser().getUsername() + " new session");
+                    loginActivityRepository.save(newSession);
+                }
+
                 verificationCodes.remove(username);
                 String token = JwtUtils.generateToken(username);
                 Map<String, String> response = new HashMap<>();

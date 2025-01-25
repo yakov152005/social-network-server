@@ -18,7 +18,7 @@ public class LoginActivity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = true)
     @CreationTimestamp
     private Date date;
 

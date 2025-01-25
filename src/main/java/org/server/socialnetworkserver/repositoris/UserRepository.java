@@ -32,4 +32,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
            "(SELECT l.user FROM LoginActivity l WHERE l.date >= :lastWeek)")
     List<User> findUsersNotLoggedInLastWeek(@Param("lastWeek") Date lastWeek);
 
+    @Query("SELECT u.username FROM User u WHERE u.email = :email")
+    String findUsernameByEmail(@Param("email") String email);
+
 }

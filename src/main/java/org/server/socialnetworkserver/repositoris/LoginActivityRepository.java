@@ -10,4 +10,8 @@ import java.util.Date;
 import java.util.List;
 
 public interface LoginActivityRepository extends JpaRepository<LoginActivity,Long> {
+    LoginActivity findByUser(User user);
+
+    @Query("SELECT l FROM LoginActivity l WHERE l.user.username = :username")
+    LoginActivity findByUsername(@Param("username") String username);
 }
