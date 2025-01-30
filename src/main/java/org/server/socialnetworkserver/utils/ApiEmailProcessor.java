@@ -3,6 +3,10 @@ package org.server.socialnetworkserver.utils;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Properties;
 import javax.mail.*;
 import javax.mail.internet.*;
@@ -45,8 +49,17 @@ public class ApiEmailProcessor {
             textPart.setContent(htmlContent, "text/html; charset=UTF-8");
 
             MimeBodyPart imagePart = new MimeBodyPart();
-            File imageFile = new ClassPathResource("SocialNetwork.png").getFile();
+            /*
+             File imageFile = new ClassPathResource("SocialNetwork.png").getFile();
             imagePart.attachFile(imageFile);
+             */
+            ClassPathResource resource = new ClassPathResource("SocialNetwork.png");
+
+            try (InputStream inputStream = resource.getInputStream()) {
+                Path tempFile = Files.createTempFile("SocialNetwork", ".png");
+                Files.copy(inputStream, tempFile, StandardCopyOption.REPLACE_EXISTING);
+                imagePart.attachFile(tempFile.toFile());
+            }
             imagePart.setContentID("<profileImage>");
             imagePart.setDisposition(MimeBodyPart.INLINE);
 

@@ -8,15 +8,9 @@ import org.server.socialnetworkserver.responses.*;
 import org.server.socialnetworkserver.utils.ApiSmsSender;
 import org.server.socialnetworkserver.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -40,18 +34,23 @@ public class UserService {
     private final PostRepository postRepository;
     private final MessageRepository messageRepository;
     private final LoginActivityRepository loginActivityRepository;
+    private final CommentRepository commentRepository;
+    private final NotificationRepository notificationRepository;
     private final Map<String, String> verificationCodes = new HashMap<>();
 
     @Autowired
     public UserService(LikeRepository likeRepository,UserRepository userRepository,
                        PostRepository postRepository, MessageRepository messageRepository,
-                       LoginActivityRepository loginActivityRepository
+                       LoginActivityRepository loginActivityRepository,CommentRepository commentRepository,
+                       NotificationRepository notificationRepository
     ) {
         this.likeRepository = likeRepository;
         this.userRepository = userRepository;
         this.postRepository = postRepository;
         this.messageRepository = messageRepository;
         this.loginActivityRepository = loginActivityRepository;
+        this.commentRepository = commentRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     public BasicResponse getNumOfUsers(){
@@ -296,6 +295,12 @@ public class UserService {
             if (storedPasswordHash.equals(currentPasswordHash)) {
                 System.out.println("Password match. Proceeding to delete...");
 
+                notificationRepository.deleteByRecipient(user.getId());
+                System.out.println("Notifications deleted.");
+                commentRepository.deleteByPostUser(user);
+                System.out.println("All comments on user's posts deleted.");
+                commentRepository.deleteByUser(user);
+                System.out.println("User's own comments deleted.");
                 likeRepository.deleteByPostUser(user);
                 System.out.println("Likes for user's posts deleted.");
                 likeRepository.deleteByUser(user);
@@ -303,6 +308,8 @@ public class UserService {
                 messageRepository.deleteBySenderOrReceiver(user);
                 System.out.println("Messages deleted.");
                 postRepository.deleteByUser(user);
+                loginActivityRepository.deleteByUser(user.getId());
+                System.out.println("Login records deleted.");
                 System.out.println("Posts deleted.");
                 userRepository.delete(user);
 
