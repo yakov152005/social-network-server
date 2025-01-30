@@ -17,9 +17,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import static org.server.socialnetworkserver.utils.UploadFileToCloud.uploadFileToCloud;
 
 @Service
 public class PostService {
@@ -40,23 +44,31 @@ public class PostService {
     }
 
 
-    public BasicResponse addPost(@PathVariable String username, @RequestBody Map<String, String> postDetails) {
-        String content = postDetails.get("content");
-        String imageUrl = postDetails.get("imageUrl");
-
-        if (imageUrl == null || imageUrl.isEmpty()) {
-            return new BasicResponse(false, "Image is Empty.");
-        }
-
+    public BasicResponse addPost(String username, String content, MultipartFile postImageFile, String postImageUrl) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
-            return new BasicResponse(false, "User not Found.");
+            return new BasicResponse(false, "User not found.");
         }
 
-        Post newPost = new Post(user, content, imageUrl);
-        postRepository.save(newPost);
+        if (postImageFile == null && postImageUrl == null){
+            return new BasicResponse(false,"Please enter the url or file");
+        }
 
-        return new BasicResponse(true, "Post added successfully.");
+        try {
+            String finalPostPicUrl;
+            if (postImageFile != null && !postImageFile.isEmpty()) {
+                finalPostPicUrl = uploadFileToCloud(postImageFile);
+            } else if (postImageUrl != null && postImageUrl.startsWith("http")) {
+                finalPostPicUrl = postImageUrl;
+            } else {
+                return new BasicResponse(false, "Invalid post picture format.");
+            }
+            Post newPost = new Post(user, content, finalPostPicUrl);
+            postRepository.save(newPost);
+            return new BasicResponse(true, "Post added successfully");
+        } catch (IOException e) {
+            return new BasicResponse(false, "Error uploading post picture.");
+        }
     }
 
 

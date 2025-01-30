@@ -8,10 +8,18 @@ import org.server.socialnetworkserver.responses.*;
 import org.server.socialnetworkserver.utils.ApiSmsSender;
 import org.server.socialnetworkserver.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +29,7 @@ import static org.server.socialnetworkserver.services.HelpMethods.*;
 import static org.server.socialnetworkserver.utils.ApiEmailProcessor.sendEmail;
 import static org.server.socialnetworkserver.utils.Constants.Errors.*;
 import static org.server.socialnetworkserver.utils.GeneratorUtils.*;
+import static org.server.socialnetworkserver.utils.UploadFileToCloud.uploadFileToCloud;
 
 @Service
 public class UserService {
@@ -239,17 +248,31 @@ public class UserService {
     }
 
 
-    public BasicResponse addProfilePicture(@RequestBody Map<String, String> addPicProfile) {
-        String username = addPicProfile.get("username");
-        String newPicture = addPicProfile.get("profilePicture");
+    public BasicResponse addProfilePicture(String username, MultipartFile profilePictureFile, String profilePictureUrl) {
         User user = userRepository.findByUsername(username);
-        if (user != null) {
-            user.setProfilePicture(newPicture);
-            userRepository.save(user);
-            return new BasicResponse(true, "Add profile pic success.");
+        if (user == null) {
+            return new BasicResponse(false, "User not found.");
         }
 
-        return new BasicResponse(false, "Add profile pic NOT success.");
+        try {
+            String finalProfilePictureUrl;
+            if (profilePictureFile != null && !profilePictureFile.isEmpty()) {
+
+                finalProfilePictureUrl = uploadFileToCloud(profilePictureFile);
+            } else if (profilePictureUrl != null && profilePictureUrl.startsWith("http")) {
+
+                finalProfilePictureUrl = profilePictureUrl;
+            } else {
+                return new BasicResponse(false, "Invalid profile picture format.");
+            }
+
+            user.setProfilePicture(finalProfilePictureUrl);
+            userRepository.save(user);
+
+            return new BasicResponse(true, "Profile picture updated successfully.");
+        } catch (IOException e) {
+            return new BasicResponse(false, "Error uploading profile picture.");
+        }
     }
 
 

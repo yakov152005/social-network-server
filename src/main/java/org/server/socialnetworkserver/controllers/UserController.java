@@ -3,8 +3,10 @@ import org.server.socialnetworkserver.responses.*;
 import org.server.socialnetworkserver.entitys.User;
 import org.server.socialnetworkserver.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 import static org.server.socialnetworkserver.utils.Constants.UrlClient.URL_SERVER;
@@ -74,10 +76,13 @@ public class UserController {
         return userService.resetPasswordForThisUser(email,username);
     }
 
+    @PostMapping(value = "/add-profile-pic", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public BasicResponse addProfilePicture(
+            @RequestParam("username") String username,
+            @RequestParam(value = "profilePictureFile", required = false) MultipartFile profilePictureFile,
+            @RequestParam(value = "profilePictureUrl", required = false) String profilePictureUrl) {
 
-    @PostMapping("/add-profile-pic")
-    public BasicResponse addProfilePicture(@RequestBody Map<String, String> addPicProfile) {
-        return userService.addProfilePicture(addPicProfile);
+        return userService.addProfilePicture(username, profilePictureFile, profilePictureUrl);
     }
 
     @GetMapping("/get-all-user-names-and-pic")

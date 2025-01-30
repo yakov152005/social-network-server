@@ -28,13 +28,13 @@ public class InactiveUsersJob {
     }
 
 
-    @Scheduled(fixedRate = 1000)
+     @Scheduled(fixedRate = 1000)
     public void printMessage() {
         System.out.println("Job is running: " + new Date());
     }
 
 
-    @Scheduled(cron = "0 * 12 * * *")
+    @Scheduled(cron = "0 * 11 * * *")
     public void sendMailToNotLoggedUsers(){
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, -7);
