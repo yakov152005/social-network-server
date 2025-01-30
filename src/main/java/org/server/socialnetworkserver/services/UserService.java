@@ -14,14 +14,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.util.*;
 
 import static org.server.socialnetworkserver.services.HelpMethods.*;
 import static org.server.socialnetworkserver.utils.ApiEmailProcessor.sendEmail;
 import static org.server.socialnetworkserver.utils.Constants.Errors.*;
+import static org.server.socialnetworkserver.utils.Constants.UrlClient.URL_CLIENT_PC;
 import static org.server.socialnetworkserver.utils.GeneratorUtils.*;
 import static org.server.socialnetworkserver.utils.UploadFileToCloud.uploadFileToCloud;
 
@@ -231,19 +230,59 @@ public class UserService {
             return new BasicResponse(false, "Username does not match email, password reset failed.");
         }
 
+        String resetToken = UUID.randomUUID().toString();
+        user.setResetToken(resetToken);
+        user.setTokenExpiryDate(LocalDateTime.now().plusHours(1));
+        userRepository.save(user);
+
+        String resetLink = URL_CLIENT_PC + "/confirm-reset?token=" + resetToken;
+
+        String emailContent = "<div style=\"max-width: 500px; margin: auto; padding: 20px; "
+                              + "border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); "
+                              + "background: rgba(255, 255, 255, 0.8); font-family: Arial, sans-serif; text-align: center;\">"
+                              + "<h5 style=\"color: #333; font-size: 20px;\">Confirm Password Reset</h5>"
+                              + "<p style=\"font-size: 14px; color: #555; font-weight: bold;\">Someone requested a password reset for your account.</p>"
+                              + "<p style=\"font-size: 14px; color: #555; font-weight: bold;\">If this was not you, ignore this email.</p>"
+                              + "<p style=\"font-size: 14px; color: #555; font-weight: bold;\">Otherwise, click the button below to reset your password:</p>"
+                              + "<a href=\"" + resetLink + "\" style=\"display: inline-block; background: linear-gradient(135deg, #007bff, #0056b3); "
+                              + "color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; "
+                              + "font-weight: bold; font-size: 16px; box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);\">Reset Password</a>"
+                              + "</div>";
+        sendEmail(user.getEmail(), "Confirm Password Reset", emailContent);
+
+
+        return new BasicResponse(true, "An email has been sent with a confirmation link.");
+    }
+
+
+    public BasicResponse confirmPasswordReset(@RequestParam String token) {
+        User user = userRepository.findByResetToken(token);
+
+        if (user == null || user.getTokenExpiryDate().isBefore(LocalDateTime.now())) {
+            return new BasicResponse(false, "Invalid or expired token.");
+        }
+
+
         String newPassword = generatorPassword();
         String salt = generateSalt();
         String hashedPassword = hashPassword(newPassword, salt);
 
+
         user.setSalt(salt);
         user.setPasswordHash(hashedPassword);
+        user.setResetToken(null);
+        user.setTokenExpiryDate(null);
         userRepository.save(user);
 
-        String title = "Reset Password";
-        String passwordDetails = "Your new password: " + newPassword + "\n";
-        sendEmail(user.getEmail(), title, passwordDetails);
+        String emailContent = "<div style=\"max-width: 500px; margin: auto; padding: 20px; "
+                              + "border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); "
+                              + "background: rgba(255, 255, 255, 0.8); font-family: Arial, sans-serif; text-align: center;\">"
+                              + "<h5 style=\"color: #333; font-size: 20px;\">Your password has been successfully reset</h5>"
+                              + "<p style=\"font-size: 14px; color: #555; font-weight: bold;\">Your new password: " + newPassword + "</p>"
+                              + "</div>";
+        sendEmail(user.getEmail(), "Your New Password", emailContent);
 
-        return new BasicResponse(true, "The password was sent to your email. Check it.");
+        return new BasicResponse(true, "Your password has been reset. Check your email for the new password.");
     }
 
 

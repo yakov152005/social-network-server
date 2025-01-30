@@ -21,7 +21,7 @@ public class UploadFileToCloud {
 
     public static String uploadFileToCloud(MultipartFile multipartFile) throws IOException {
         Map uploadResult = cloudinary.uploader().upload(multipartFile.getBytes(), ObjectUtils.emptyMap());
-        return (String) uploadResult.get("secure_url");  // מחזיר את הקישור הישיר לתמונה
+        return (String) uploadResult.get("secure_url");
     }
 
     /*

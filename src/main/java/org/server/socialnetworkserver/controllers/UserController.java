@@ -76,6 +76,12 @@ public class UserController {
         return userService.resetPasswordForThisUser(email,username);
     }
 
+    @PostMapping("/confirm-reset-password")
+    public BasicResponse confirmResetPassword(@RequestParam String token){
+        System.out.println(token + " token");
+        return userService.confirmPasswordReset(token);
+    }
+
     @PostMapping(value = "/add-profile-pic", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public BasicResponse addProfilePicture(
             @RequestParam("username") String username,
