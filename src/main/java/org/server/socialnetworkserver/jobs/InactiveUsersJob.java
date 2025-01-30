@@ -28,10 +28,12 @@ public class InactiveUsersJob {
     }
 
 
-     @Scheduled(fixedRate = 1000)
+    /*
+      @Scheduled(fixedRate = 1000)
     public void printMessage() {
         System.out.println("Job is running: " + new Date());
     }
+     */
 
 
     @Scheduled(cron = "0 * 11 * * *")
