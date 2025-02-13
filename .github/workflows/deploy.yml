@@ -13,6 +13,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Notify GitHub of Deployment Start
+        id: deployment
         uses: bobheadxi/deployments@v1
         with:
           step: start
@@ -30,3 +31,4 @@ jobs:
           token: ${{ secrets.PAT_TOKEN }}
           env: production
           status: success
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
