@@ -1,0 +1,32 @@
+name: Deploy to Render
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Notify GitHub of Deployment Start
+        uses: bobheadxi/deployments@v1
+        with:
+          step: start
+          token: ${{ secrets.PAT_TOKEN }}
+          env: production
+
+      - name: Deploy to Render
+        run: |
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+
+      - name: Notify GitHub of Deployment Success
+        uses: bobheadxi/deployments@v1
+        with:
+          step: finish
+          token: ${{ secrets.PAT_TOKEN }}
+          env: production
+          status: success

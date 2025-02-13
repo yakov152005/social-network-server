@@ -1,7 +1,5 @@
 package org.server.socialnetworkserver.utils;
 import io.github.cdimascio.dotenv.Dotenv;
-import org.server.socialnetworkserver.config.EnvironmentConfig;
-import org.springframework.beans.factory.annotation.Autowired;
 
 
 public class Constants {
@@ -9,8 +7,7 @@ public class Constants {
     public static Dotenv dotenv = Dotenv.load();
 
     public static class ForTest{
-        public static final String URL_TEST = "https://social-network-server-m0ef.onrender.com/slow-endpoint";
-        //public static final String URL_TEST = dotenv.get("URL_TEST");
+        public static String URL_TEST = "https://social-network-server-m0ef.onrender.com/slow-endpoint";
     }
 
     public static class ChatGpt{
@@ -21,13 +18,12 @@ public class Constants {
 
     public static class UrlClient{
         public static final String URL_SERVER = "/social-network";
-        //public static final String URL_CLIENT_PC = dotenv.get("URL_CLIENT_PC");
         public static final String URL_CLIENT_PC = "https://social-network-client-k8fp.onrender.com";
     }
 
     public static class EmailConstants{
-        public static final String SENDER_EMAIL = "servicenetwork62@gmail.com";
-        public static final String SENDER_PASSWORD = "oddj frrd pvix cucf";
+        public static String SENDER_EMAIL = "servicenetwork62@gmail.com";
+        public static String SENDER_PASSWORD = "oddj frrd pvix cucf";
         public static final String PERSONAL = "Social Network";
         public static final String TITLE = "מה קורה ";
         public static final String CONTENT = "💟 לא התחברת המון זמן, בוא לבקר אותנו ";
@@ -36,7 +32,7 @@ public class Constants {
 
     public static class SmsConstants{
         public static final String SMS_SENDER = "NETWORKAPI";
-        public static final String SMS_TOKEN = "c2hhaUBlbGVjdG9yLmNvLmlsOmUxYjc3YjhiLWYzZjctNGFlMC1hNzYzLTY3ZDk4YmE5YTJlNQ";
+        public static String SMS_TOKEN = "c2hhaUBlbGVjdG9yLmNvLmlsOmUxYjc3YjhiLWYzZjctNGFlMC1hNzYzLTY3ZDk4YmE5YTJlNQ";
         public static final String URL_SMS = "https://capi.inforu.co.il/api/v2/SMS/SendSms";
     }
 
