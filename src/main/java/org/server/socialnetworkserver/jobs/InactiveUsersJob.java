@@ -36,7 +36,7 @@ public class InactiveUsersJob {
      */
 
 
-    @Scheduled(cron = "0 * 11 * * *")
+    @Scheduled(cron = "0 0 11 * * SUN")
     public void sendMailToNotLoggedUsers(){
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_YEAR, -7);
