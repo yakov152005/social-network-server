@@ -17,8 +17,5 @@ public class ProfileStatsDto {
     }
 
     public ProfileStatsDto() {
-        this.followersCount = 0;
-        this.followingCount = 0;
-        this.isFollowing = false;
     }
 }

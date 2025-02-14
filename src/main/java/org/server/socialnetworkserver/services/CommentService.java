@@ -16,6 +16,8 @@ import org.server.socialnetworkserver.responses.BasicResponse;
 import org.server.socialnetworkserver.responses.CommentResponse;
 import org.server.socialnetworkserver.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,6 +45,7 @@ public class CommentService {
         this.notificationController = notificationController;
     }
 
+    @CacheEvict(value = "postCommentsCache", key = "'comments_' + #commentResponse.postId")
     public BasicResponse addComments(@RequestBody CommentResponse commentResponse ){
         User user = userRepository.findByUsername(commentResponse.getUsername());
         Post post = postRepository.findById(commentResponse.getPostId()).orElse(null);
@@ -80,7 +83,7 @@ public class CommentService {
         return new BasicResponse(true,"Add comment success.");
     }
 
-
+    @Cacheable(value = "postCommentsCache", key = "'comments_' + #postId")
     public AllCommentsResponse getAllCommentPost(@PathVariable Long postId){
         List<CommentDto> comments = commentRepository.findAllCommentByPostId(postId);
 

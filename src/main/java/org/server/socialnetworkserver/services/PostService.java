@@ -45,7 +45,7 @@ public class PostService {
         this.commentRepository = commentRepository;
     }
 
-    @CacheEvict(value = "homeFeedCache", allEntries = true)
+    @CacheEvict(value = {"homeFeedCache", "userPostsCache"}, allEntries = true)
     public BasicResponse addPost(String username, String content, MultipartFile postImageFile, String postImageUrl) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
