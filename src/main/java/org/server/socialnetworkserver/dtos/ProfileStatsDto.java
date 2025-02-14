@@ -1,10 +1,9 @@
 package org.server.socialnetworkserver.dtos;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+
+@Data
 public class ProfileStatsDto {
     private int followersCount;
     private int followingCount;

@@ -75,7 +75,8 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     FROM User u
     WHERE u.username = :username
     """)
-    Optional<ProfileStatsDto> getProfileStats(@Param("username") String username, @Param("currentUserId") Long currentUserId);
+    List<ProfileStatsDto> getProfileStats(@Param("username") String username, @Param("currentUserId") Long currentUserId);
+
 
 
     @Modifying

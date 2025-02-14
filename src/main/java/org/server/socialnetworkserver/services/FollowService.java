@@ -110,8 +110,9 @@ public class FollowService {
             return new ProfileResponse(false, "No find user.", null);
         }
 
-        ProfileStatsDto profileStats = followRepository.getProfileStats(username, currentUser.getId())
-                .orElse(new ProfileStatsDto(0, 0, false));
+        List<ProfileStatsDto> profileStatsList = followRepository.getProfileStats(username, currentUser.getId());
+        ProfileStatsDto profileStats = profileStatsList.isEmpty() ? new ProfileStatsDto(0, 0, false) : profileStatsList.get(0);
+
 
 
         List<Object[]> results = postRepository.findProfilePosts(username, currentUser.getId());
