@@ -36,23 +36,22 @@ public class InactiveUsersJob {
      */
 
 
-    @Scheduled(cron = "0 0 11 * * SUN")
+    @Scheduled(cron = "0 0 11 1 * ?")
     public void sendMailToNotLoggedUsers(){
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, -7);
+        calendar.add(Calendar.DAY_OF_YEAR, -30);
 
-        Date lastWeek = calendar.getTime();
-        List<User> loginActivityList = userRepository.findUsersNotLoggedInLastWeek(lastWeek);
+        Date lastMonth = calendar.getTime();
+        List<User> loginActivityList = userRepository.findUsersNotLoggedInLastMonth(lastMonth);
 
-        if (loginActivityList != null){
-            List<String> emails = loginActivityList.stream().map(User::getEmail).toList();
+        if (!loginActivityList.isEmpty()) {
+            loginActivityList.forEach(user -> {
+                String email = user.getEmail();
+                String username = user.getUsername();
 
-            for (String email : emails){
                 System.out.println(email);
-                String username = userRepository.findUsernameByEmail(email);
-
-                sendEmail(email, TITLE + username + "?" , CONTENT.toString());
-            }
+                sendEmail(email, TITLE + username + "?", CONTENT.toString());
+            });
         }
     }
 }
