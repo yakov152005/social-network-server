@@ -1,10 +1,14 @@
 package org.server.socialnetworkserver.entitys;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "NOTIFICATION")
 public class Notification {
@@ -73,87 +77,6 @@ public class Notification {
 
     public Notification() {
 
-    }
-
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public Long getPostId() {
-        return postId;
-    }
-
-    public void setPostId(Long postId) {
-        this.postId = postId;
-    }
-
-    public User getRecipient() {
-        return recipient;
-    }
-
-    public void setRecipient(User recipient) {
-        this.recipient = recipient;
-    }
-
-    public User getInitiator() {
-        return initiator;
-    }
-
-    public void setInitiator(User initiator) {
-        this.initiator = initiator;
-    }
-
-    public String getInitiatorProfilePicture() {
-        return initiatorProfilePicture;
-    }
-
-    public void setInitiatorProfilePicture(String initiatorProfilePicture) {
-        this.initiatorProfilePicture = initiatorProfilePicture;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getPostImg() {
-        return postImg;
-    }
-
-    public void setPostImg(String postImg) {
-        this.postImg = postImg;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public boolean isRead() {
-        return isRead;
-    }
-
-    public void setRead(boolean read) {
-        isRead = read;
     }
 
     @Override

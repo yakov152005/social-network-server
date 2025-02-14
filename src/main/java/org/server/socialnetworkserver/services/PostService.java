@@ -73,8 +73,8 @@ public class PostService {
         }
     }
 
-
-
+    /*
+    @Cacheable(value = "userPostsCache", key = "#username")
     public PostResponse getPostByUserName(@PathVariable String username) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
@@ -102,6 +102,36 @@ public class PostService {
 
         return new PostResponse(true, "All posts by user.", postDtos);
     }
+     */
+    @Cacheable(value = "userPostsCache", key = "#username")
+    public PostResponse getPostByUserName(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            return new PostResponse(false, "User not found", null);
+        }
+
+        List<Object[]> results = postRepository.findPostsWithDetails(username, user.getId());
+        if (results.isEmpty()) {
+            return new PostResponse(false, "No posts found for the user.", null);
+        }
+
+        List<PostDto> postDtos = results.stream()
+                .map(result -> new PostDto(
+                        ((Post) result[0]).getId(),
+                        ((Post) result[0]).getUser().getUsername(),
+                        ((Post) result[0]).getUser().getProfilePicture(),
+                        ((Post) result[0]).getContent(),
+                        ((Post) result[0]).getImageUrl(),
+                        ((Post) result[0]).getDate(),
+                        (Boolean) result[3], // isLiked
+                        ((Number) result[1]).intValue(), // likeCount
+                        ((Number) result[2]).intValue() // commentCount
+                ))
+                .toList();
+
+        return new PostResponse(true, "All posts by user.", postDtos);
+    }
+
 
 
     @Cacheable(value = "homeFeedCache", key = "#username + '-' + #page")

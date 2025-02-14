@@ -1,10 +1,14 @@
 package org.server.socialnetworkserver.entitys;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "LIKES")
 public class Like{
@@ -40,35 +44,4 @@ public class Like{
 
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Post getPost() {
-        return post;
-    }
-
-    public void setPost(Post post) {
-        this.post = post;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Date getLikedAt() {
-        return likedAt;
-    }
-
-    public void setLikedAt(Date likedAt) {
-        this.likedAt = likedAt;
-    }
 }

@@ -61,6 +61,20 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
             @Param("username") String username
     );
 
+    @Query(""" 
+    SELECT
+        (SELECT COUNT(f) FROM Follow f WHERE f.following.username = :username) AS followersCount,
+        (SELECT COUNT(f) FROM Follow f WHERE f.follower.username = :username) AS followingCount,
+        CASE
+            WHEN EXISTS (SELECT 1 FROM Follow f WHERE f.follower.username = :currentUsername AND f.following.username = :username)
+            THEN true ELSE false
+        END AS isFollowing
+    FROM User u
+    WHERE u.username = :username
+    """)
+    Object[] getProfileStats(@Param("username") String username, @Param("currentUsername") String currentUsername);
+
+
 
     @Modifying
     @Query("""

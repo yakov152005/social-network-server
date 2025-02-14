@@ -2,8 +2,13 @@ package org.server.socialnetworkserver.entitys;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Objects;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "FOLLOWERS",
         uniqueConstraints = @UniqueConstraint(columnNames = {"follower_id", "following_id"})
@@ -30,29 +35,6 @@ public class Follow {
         this.following = following;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public User getFollower() {
-        return follower;
-    }
-
-    public void setFollower(User follower) {
-        this.follower = follower;
-    }
-
-    public User getFollowing() {
-        return following;
-    }
-
-    public void setFollowing(User following) {
-        this.following = following;
-    }
 
     @Override
     public boolean equals(Object o) {

@@ -17,6 +17,7 @@ import org.server.socialnetworkserver.responses.FollowResponse;
 import org.server.socialnetworkserver.responses.ProfileResponse;
 import org.server.socialnetworkserver.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -29,22 +30,18 @@ public class FollowService {
     private final FollowRepository followRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
-    private final LikeRepository likeRepository;
-    private final CommentRepository commentRepository;
     private final NotificationRepository notificationRepository;
     private final NotificationController notificationController;
 
     @Autowired
     public FollowService(FollowRepository followRepository, UserRepository userRepository,
-                         PostRepository postRepository,LikeRepository likeRepository,CommentRepository commentRepository,
-                         NotificationRepository notificationRepository, NotificationController notificationController
+                         PostRepository postRepository, NotificationRepository notificationRepository,
+                         NotificationController notificationController
 
     ) {
         this.followRepository = followRepository;
         this.userRepository = userRepository;
         this.postRepository = postRepository;
-        this.likeRepository = likeRepository;
-        this.commentRepository = commentRepository;
         this.notificationRepository = notificationRepository;
         this.notificationController = notificationController;
     }
@@ -63,8 +60,7 @@ public class FollowService {
     }
 
 
-
-
+    /*
     public ProfileResponse getAllDetailsOfProfileSearch(@PathVariable String currentUsername, @PathVariable String username){
         User currentUser = userRepository.findByUsername(currentUsername);
         User searchUser = userRepository.findByUsername(username);
@@ -105,6 +101,48 @@ public class FollowService {
 
         return new ProfileResponse(true,"Profile response success.",profileDto);
     }
+     */
+    @Cacheable(value = "profileCache", key = "#username")
+    public ProfileResponse getAllDetailsOfProfileSearch(String currentUsername, String username){
+        User currentUser = userRepository.findByUsername(currentUsername);
+        User searchUser = userRepository.findByUsername(username);
+
+        if (currentUser == null || searchUser == null){
+            return new ProfileResponse(false, "No find user.", null);
+        }
+
+        Object[] profileStats = followRepository.getProfileStats(username, currentUsername);
+        int followers = ((Number) profileStats[0]).intValue();
+        int following = ((Number) profileStats[1]).intValue();
+        boolean isFollowing = (Boolean) profileStats[2];
+
+        List<Object[]> results = postRepository.findProfilePosts(username, currentUser.getId());
+        List<PostDto> postDtos = results.stream()
+                .map(result -> new PostDto(
+                        ((Post) result[0]).getId(),
+                        ((Post) result[0]).getUser().getUsername(),
+                        ((Post) result[0]).getUser().getProfilePicture(),
+                        ((Post) result[0]).getContent(),
+                        ((Post) result[0]).getImageUrl(),
+                        ((Post) result[0]).getDate(),
+                        (Boolean) result[3], // isLiked
+                        ((Number) result[1]).intValue(), // likeCount
+                        ((Number) result[2]).intValue() // commentCount
+                ))
+                .toList();
+
+        ProfileDto profileDto = new ProfileDto(
+                searchUser.getUsername(),
+                searchUser.getProfilePicture(),
+                followers,
+                following,
+                isFollowing,
+                postDtos
+        );
+
+        return new ProfileResponse(true, "Profile response success.", profileDto);
+    }
+
 
     public FollowResponse getFollower(@PathVariable String username){
        List<FollowDto> getAllFollowers = followRepository.getAllFollowers(username);
