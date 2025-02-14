@@ -1,6 +1,7 @@
 package org.server.socialnetworkserver.repositoris;
 
 import org.server.socialnetworkserver.dtos.FollowDto;
+import org.server.socialnetworkserver.dtos.ProfileStatsDto;
 import org.server.socialnetworkserver.entitys.Follow;
 import org.server.socialnetworkserver.entitys.User;
 import org.server.socialnetworkserver.responses.FollowResponse;
@@ -10,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
@@ -61,18 +63,21 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
             @Param("username") String username
     );
 
-    @Query(""" 
-    SELECT
-        (SELECT COUNT(f) FROM Follow f WHERE f.following.username = :username) AS followersCount,
-        (SELECT COUNT(f) FROM Follow f WHERE f.follower.username = :username) AS followingCount,
+    @Query("""
+    SELECT new org.server.socialnetworkserver.dtos.ProfileStatsDto(
+        (SELECT COUNT(f) FROM Follow f WHERE f.following.username = :username),
+        (SELECT COUNT(f) FROM Follow f WHERE f.follower.username = :username),
         CASE
             WHEN EXISTS (SELECT 1 FROM Follow f WHERE f.follower.username = :currentUsername AND f.following.username = :username)
             THEN true ELSE false
-        END AS isFollowing
+        END
+    )
     FROM User u
     WHERE u.username = :username
     """)
-    Object[] getProfileStats(@Param("username") String username, @Param("currentUsername") String currentUsername);
+    Optional<ProfileStatsDto> getProfileStats(@Param("username") String username, @Param("currentUsername") String currentUsername);
+
+
 
 
 

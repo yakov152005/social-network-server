@@ -2,10 +2,7 @@ package org.server.socialnetworkserver.services;
 
 import jakarta.transaction.Transactional;
 import org.server.socialnetworkserver.controllers.NotificationController;
-import org.server.socialnetworkserver.dtos.FollowDto;
-import org.server.socialnetworkserver.dtos.NotificationDto;
-import org.server.socialnetworkserver.dtos.PostDto;
-import org.server.socialnetworkserver.dtos.ProfileDto;
+import org.server.socialnetworkserver.dtos.*;
 import org.server.socialnetworkserver.entitys.Follow;
 import org.server.socialnetworkserver.entitys.Notification;
 import org.server.socialnetworkserver.entitys.Post;
@@ -23,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FollowService {
@@ -111,10 +109,16 @@ public class FollowService {
             return new ProfileResponse(false, "No find user.", null);
         }
 
-        Object[] profileStats = followRepository.getProfileStats(username, currentUsername);
-        int followers = ((Number) profileStats[0]).intValue();
-        int following = ((Number) profileStats[1]).intValue();
-        boolean isFollowing = (Boolean) profileStats[2];
+        Optional<ProfileStatsDto> profileStatsOptional = followRepository.getProfileStats(username, currentUsername);
+
+        if (profileStatsOptional.isEmpty()) {
+            return new ProfileResponse(false, "Profile stats not found.", null);
+        }
+
+        ProfileStatsDto profileStats = profileStatsOptional.get();
+        int followers = profileStats.getFollowersCount();
+        int following = profileStats.getFollowingCount();
+        boolean isFollowing = profileStats.isFollowing();
 
         List<Object[]> results = postRepository.findProfilePosts(username, currentUser.getId());
         List<PostDto> postDtos = results.stream()
