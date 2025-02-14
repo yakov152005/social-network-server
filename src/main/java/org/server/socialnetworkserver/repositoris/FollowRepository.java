@@ -78,9 +78,6 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     Optional<ProfileStatsDto> getProfileStats(@Param("username") String username, @Param("currentUsername") String currentUsername);
 
 
-
-
-
     @Modifying
     @Query("""
             DELETE FROM Follow f

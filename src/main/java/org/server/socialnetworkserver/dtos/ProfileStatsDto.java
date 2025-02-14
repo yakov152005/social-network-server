@@ -15,4 +15,8 @@ public class ProfileStatsDto {
         this.followingCount = followingCount;
         this.isFollowing = isFollowing;
     }
+
+    public ProfileStatsDto(){
+
+    }
 }
