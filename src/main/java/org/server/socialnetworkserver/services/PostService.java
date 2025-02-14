@@ -10,6 +10,8 @@ import org.server.socialnetworkserver.repositoris.UserRepository;
 import org.server.socialnetworkserver.responses.BasicResponse;
 import org.server.socialnetworkserver.responses.PostResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -43,7 +45,7 @@ public class PostService {
         this.commentRepository = commentRepository;
     }
 
-
+    @CacheEvict(value = "homeFeedCache", allEntries = true)
     public BasicResponse addPost(String username, String content, MultipartFile postImageFile, String postImageUrl) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
@@ -102,13 +104,14 @@ public class PostService {
     }
 
 
-
+    @Cacheable(value = "homeFeedCache", key = "#username + '-' + #page")
     public PostResponse getHomeFeedPost
             (@PathVariable String username,
              @RequestParam(defaultValue = "0") int page,
              @RequestParam(defaultValue = "10") int size)
     {
         System.out.println("Received request - Username: " + username + ", Page: " + page + ", Size: " + size);
+        System.out.println("Fetching posts from database for: " + username + ", Page: " + page);
 
         User user = userRepository.findByUsername(username);
         if (user == null) {

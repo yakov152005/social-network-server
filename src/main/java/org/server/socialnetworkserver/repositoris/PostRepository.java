@@ -24,6 +24,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
              """)
     List<Post> findPostsByUsername(@Param("currentUsername") String username);
 
+    /*
     @Query("""
                 SELECT p FROM Post p
                 WHERE p.user.username = :username
@@ -33,6 +34,18 @@ public interface PostRepository extends JpaRepository<Post, Long> {
                 ORDER BY p.date DESC
             """)
     Page<Post> findHomeFeedPosts(String username, Pageable pageable);
+     */
+
+    @Query("""
+    SELECT DISTINCT p
+    FROM Post p
+    JOIN p.user u
+    LEFT JOIN Follow f ON f.following = u AND f.follower.username = :username
+    WHERE u.username = :username OR f.id IS NOT NULL
+    ORDER BY p.date DESC
+    """)
+    Page<Post> findHomeFeedPosts(String username, Pageable pageable);
+
 
     @Query("SELECT p FROM Post p WHERE p.content = :content")
     Post findPostByContent(@PathVariable String content);
