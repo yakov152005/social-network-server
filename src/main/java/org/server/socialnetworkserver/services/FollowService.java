@@ -100,7 +100,7 @@ public class FollowService {
         return new ProfileResponse(true,"Profile response success.",profileDto);
     }
      */
-    @Cacheable(value = "profileCache", key = "#username")
+    @Cacheable(value = "profileCache", key = "#currentUsername + '_' + #username")
     public ProfileResponse getAllDetailsOfProfileSearch(String currentUsername, String username){
         User currentUser = userRepository.findByUsername(currentUsername);
         User searchUser = userRepository.findByUsername(username);
@@ -109,16 +109,9 @@ public class FollowService {
             return new ProfileResponse(false, "No find user.", null);
         }
 
-        Optional<ProfileStatsDto> profileStatsOptional = followRepository.getProfileStats(username, currentUsername);
+        ProfileStatsDto profileStats = followRepository.getProfileStats(username, currentUser.getId())
+                .orElse(new ProfileStatsDto(0L, 0L, false));
 
-        if (profileStatsOptional.isEmpty()) {
-            return new ProfileResponse(false, "Profile stats not found.", null);
-        }
-
-        ProfileStatsDto profileStats = profileStatsOptional.get();
-        int followers = profileStats.getFollowersCount();
-        int following = profileStats.getFollowingCount();
-        boolean isFollowing = profileStats.isFollowing();
 
         List<Object[]> results = postRepository.findProfilePosts(username, currentUser.getId());
         List<PostDto> postDtos = results.stream()
@@ -138,9 +131,9 @@ public class FollowService {
         ProfileDto profileDto = new ProfileDto(
                 searchUser.getUsername(),
                 searchUser.getProfilePicture(),
-                followers,
-                following,
-                isFollowing,
+                profileStats.getFollowersCount().intValue(),
+                profileStats.getFollowingCount().intValue(),
+                profileStats.isFollowing(),
                 postDtos
         );
 
