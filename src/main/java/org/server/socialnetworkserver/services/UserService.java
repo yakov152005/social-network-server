@@ -54,7 +54,7 @@ public class UserService {
         this.notificationRepository = notificationRepository;
     }
 
-    //@Cacheable(value = "numUsersCache")
+    @Cacheable(value = "numUsersCache")
     public BasicResponse getNumOfUsers(){
         String numOfUsers = String.valueOf(userRepository.findAll().size());
         return new BasicResponse(true,numOfUsers);
@@ -70,7 +70,7 @@ public class UserService {
         return new TokenResponse(isValid, isValid ? "Token is valid" : "Token is invalid", isValid,username);
     }
 
-    //@CacheEvict(value = "numUsersCache", allEntries = true)
+    @CacheEvict(value = "numUsersCache", allEntries = true)
     public ValidationResponse addUser(@RequestBody User user) {
         User newUser = userRepository.findByUsername(user.getUsername());
 
@@ -199,7 +199,7 @@ public class UserService {
 
 
 
-   // @Cacheable(value = "userDetailsCache", key = "#token")
+    @Cacheable(value = "userDetailsCache", key = "#token")
     public Map<String, Object> getUserDetails(@RequestHeader("Authorization") String token) {
         Map<String, Object> response = new HashMap<>();
 
@@ -290,7 +290,7 @@ public class UserService {
     }
 
 
-   // @CacheEvict(value = "userDetailsCache", key = "#username")
+    @CacheEvict(value = "userDetailsCache", key = "#username")
     public BasicResponse addProfilePicture(String username, MultipartFile profilePictureFile, String profilePictureUrl) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
@@ -318,7 +318,7 @@ public class UserService {
         }
     }
 
-   // @Cacheable(value = "allUsersCache")
+    @Cacheable(value = "allUsersCache")
     public UserNamesWithPicResponse getAllUserNamesAndPic() {
         List<UsernameWithPicDto> result = userRepository.findAllUsernamesWithPic();
         if (result.isEmpty()) {
@@ -328,7 +328,7 @@ public class UserService {
         return new UserNamesWithPicResponse(true, "All users with pic.", result);
     }
 
-   // @CacheEvict(value = {"userDetailsCache", "allUsersCache", "numUsersCache"}, key = "#username")
+    @CacheEvict(value = {"userDetailsCache", "allUsersCache", "numUsersCache"}, key = "#username")
     @Transactional
     public BasicResponse deleteUser(String username, String password) {
         User user = userRepository.findByUsername(username);
