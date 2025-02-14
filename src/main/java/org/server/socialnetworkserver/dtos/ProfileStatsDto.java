@@ -1,33 +1,24 @@
 package org.server.socialnetworkserver.dtos;
 
-
+import lombok.Getter;
 import lombok.Setter;
 
-
+@Getter
 @Setter
 public class ProfileStatsDto {
-    private Long followersCount;
-    private Long followingCount;
-    private Boolean isFollowing;
+    private int followersCount;
+    private int followingCount;
+    private boolean isFollowing;
 
-    public ProfileStatsDto(Long followersCount, Long followingCount, Boolean isFollowing) {
-        this.followersCount = (followersCount != null) ? followersCount : 0;
-        this.followingCount = (followingCount != null) ? followingCount : 0;
-        this.isFollowing = (isFollowing != null) ? isFollowing : false;
+    public ProfileStatsDto(int followersCount, int followingCount, boolean isFollowing) {
+        this.followersCount = followersCount;
+        this.followingCount = followingCount;
+        this.isFollowing = isFollowing;
     }
 
-    public ProfileStatsDto() {}
-
-    public Long getFollowersCount() {
-        return followersCount;
+    public ProfileStatsDto() {
+        this.followersCount = 0;
+        this.followingCount = 0;
+        this.isFollowing = false;
     }
-
-    public Long getFollowingCount() {
-        return followingCount;
-    }
-
-    public Boolean isFollowing() {
-        return isFollowing;
-    }
-
 }

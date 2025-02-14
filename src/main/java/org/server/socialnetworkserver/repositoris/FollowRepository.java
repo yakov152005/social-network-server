@@ -71,7 +71,7 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
             WHEN EXISTS (SELECT 1 FROM Follow f WHERE f.follower.id = :currentUserId AND f.following.id = u.id)
             THEN true ELSE false
         END
-    )
+         )
     FROM User u
     WHERE u.username = :username
     """)
