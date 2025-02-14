@@ -65,8 +65,8 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 
     @Query("""
     SELECT new org.server.socialnetworkserver.dtos.ProfileStatsDto(
-        (SELECT COUNT(f) FROM Follow f WHERE f.following.id = u.id),
-        (SELECT COUNT(f) FROM Follow f WHERE f.follower.id = u.id),
+        CAST((SELECT COUNT(f.id) FROM Follow f WHERE f.following.id = u.id) AS long),
+        CAST((SELECT COUNT(f.id) FROM Follow f WHERE f.follower.id = u.id) AS long),
         CASE
             WHEN EXISTS (SELECT 1 FROM Follow f WHERE f.follower.id = :currentUserId AND f.following.id = u.id)
             THEN true ELSE false
@@ -76,6 +76,7 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     WHERE u.username = :username
     """)
     List<ProfileStatsDto> getProfileStats(@Param("username") String username, @Param("currentUserId") Long currentUserId);
+
 
 
 

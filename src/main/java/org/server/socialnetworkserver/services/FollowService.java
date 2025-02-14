@@ -111,7 +111,7 @@ public class FollowService {
         }
 
         List<ProfileStatsDto> profileStatsList = followRepository.getProfileStats(username, currentUser.getId());
-        ProfileStatsDto profileStats = profileStatsList.isEmpty() ? new ProfileStatsDto(0, 0, false) : profileStatsList.get(0);
+        ProfileStatsDto profileStats = profileStatsList.isEmpty() ? new ProfileStatsDto(0L, 0L, false) : profileStatsList.get(0);
 
 
 
