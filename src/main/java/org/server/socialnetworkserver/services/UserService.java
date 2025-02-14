@@ -336,6 +336,8 @@ public class UserService {
 
                 notificationRepository.deleteByRecipient(user.getId());
                 System.out.println("Notifications deleted.");
+                notificationRepository.deleteByInitiator(user.getId());
+                System.out.println("Notifications initiated by user deleted.");
                 commentRepository.deleteByPostUser(user);
                 System.out.println("All comments on user's posts deleted.");
                 commentRepository.deleteByUser(user);
