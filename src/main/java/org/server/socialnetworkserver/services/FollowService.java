@@ -45,7 +45,7 @@ public class FollowService {
         this.notificationController = notificationController;
     }
 
-    @Cacheable(value = "followCountCache", key = "#username")
+   // @Cacheable(value = "followCountCache", key = "#username")
     public AllFollowResponse getNumOfFollowersAndFollowing(@PathVariable String username){
         User user = userRepository.findByUsername(username);
         if (user == null){
@@ -101,7 +101,7 @@ public class FollowService {
         return new ProfileResponse(true,"Profile response success.",profileDto);
     }
      */
-    @Cacheable(value = "profileCache", key = "#currentUsername + '_' + #username")
+   // @Cacheable(value = "profileCache", key = "#currentUsername + '_' + #username")
     public ProfileResponse getAllDetailsOfProfileSearch(String currentUsername, String username){
         User currentUser = userRepository.findByUsername(currentUsername);
         User searchUser = userRepository.findByUsername(username);
@@ -142,7 +142,7 @@ public class FollowService {
         return new ProfileResponse(true, "Profile response success.", profileDto);
     }
 
-    @Cacheable(value = "followersCache", key = "#username")
+   // @Cacheable(value = "followersCache", key = "#username")
     public FollowResponse getFollower(@PathVariable String username){
        List<FollowDto> getAllFollowers = followRepository.getAllFollowers(username);
        List<FollowDto> getAllFollowing = followRepository.getAllFollowing(username);
@@ -157,7 +157,7 @@ public class FollowService {
     }
 
 
-    @CacheEvict(value = {"followersCache", "profileCache", "followCountCache"}, key = "#currentUsername + '_' + #username")
+   // @CacheEvict(value = {"followersCache", "profileCache", "followCountCache"}, key = "#currentUsername + '_' + #username")
     public BasicResponse followUser(@PathVariable String username, @PathVariable String currentUsername){
         User userToFollow = userRepository.findByUsername(username);
         User currentUser = userRepository.findByUsername(currentUsername);
@@ -197,7 +197,7 @@ public class FollowService {
         return new BasicResponse(true,"Followed successfully!");
     }
 
-    @CacheEvict(value = {"followersCache", "profileCache", "followCountCache"}, key = "#currentUsername + '_' + #username")
+   // @CacheEvict(value = {"followersCache", "profileCache", "followCountCache"}, key = "#currentUsername + '_' + #username")
     @Transactional
     public BasicResponse unfollowUser(String username, String currentUsername) {
         User userToUnFollow = userRepository.findByUsername(username);

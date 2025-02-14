@@ -17,13 +17,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import static org.server.socialnetworkserver.utils.UploadFileToCloud.uploadFileToCloud;
 
@@ -45,7 +43,7 @@ public class PostService {
         this.commentRepository = commentRepository;
     }
 
-    @CacheEvict(value = {"homeFeedCache", "userPostsCache"}, allEntries = true)
+    //@CacheEvict(value = {"homeFeedCache", "userPostsCache"}, allEntries = true)
     public BasicResponse addPost(String username, String content, MultipartFile postImageFile, String postImageUrl) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
@@ -103,7 +101,7 @@ public class PostService {
         return new PostResponse(true, "All posts by user.", postDtos);
     }
      */
-    @Cacheable(value = "userPostsCache", key = "#username")
+    //@Cacheable(value = "userPostsCache", key = "#username")
     public PostResponse getPostByUserName(String username) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
@@ -134,7 +132,7 @@ public class PostService {
 
 
 
-    @Cacheable(value = "homeFeedCache", key = "#username + '-' + #page")
+    //@Cacheable(value = "homeFeedCache", key = "#username + '-' + #page")
     public PostResponse getHomeFeedPost
             (@PathVariable String username,
              @RequestParam(defaultValue = "0") int page,
