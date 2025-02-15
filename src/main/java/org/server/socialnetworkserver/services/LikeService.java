@@ -79,6 +79,7 @@ public class LikeService {
 
           notificationController.sendNotification(post.getUser().getUsername(),notificationDto);
       }
+        System.out.println("🔄 Clearing cache: postLikesCache -> likes_" + postId);
 
         return new BasicResponse(true, "Post liked successfully.");
     }
@@ -99,6 +100,7 @@ public class LikeService {
 
     @Cacheable(value = "postLikesCache", key = "#postId")
     public int countLikes(@PathVariable Long postId){
+        System.out.println("🟢 Fetching count from database for post ID: " + postId);
         return likeRepository.countLikeByPost(postId);
     }
 
