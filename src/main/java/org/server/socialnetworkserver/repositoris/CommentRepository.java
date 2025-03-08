@@ -28,10 +28,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
                 JOIN c.user u
                 WHERE c.post.id = :postId
             """)
-    public List<CommentDto> findAllCommentByPostId(@Param("postId") Long postId);
+    List<CommentDto> findAllCommentByPostId(@Param("postId") Long postId);
 
     @Query("SELECT COUNT(c.id) FROM Comment c WHERE c.post.id = :postId")
-    public int countCommentByPostId(@Param("postId") Long postId);
+    int countCommentByPostId(@Param("postId") Long postId);
 
     @Modifying
     @Transactional

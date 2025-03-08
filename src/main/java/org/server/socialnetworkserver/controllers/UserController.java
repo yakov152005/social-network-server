@@ -44,7 +44,6 @@ public class UserController {
 
     @PostMapping("/add-user")
     public ValidationResponse addUser(@RequestBody User user) {
-
         return userService.addUser(user);
     }
 

@@ -1,6 +1,5 @@
 package org.server.socialnetworkserver.repositoris;
 
-import org.server.socialnetworkserver.dtos.CommentDto;
 import org.server.socialnetworkserver.dtos.LikeDto;
 import org.server.socialnetworkserver.entitys.Like;
 import org.server.socialnetworkserver.entitys.Post;
@@ -30,15 +29,28 @@ public interface LikeRepository extends JpaRepository<Like, Long> {
               FROM Like l
               WHERE l.post.id = :postId
             """)
-    public List<LikeDto> findAllLikesByPostId(@Param("postId") Long postId);
+    List<LikeDto> findAllLikesByPostId(@Param("postId") Long postId);
 
-    @Query("""
+
+    /*
+      @Query("""
             SELECT CASE WHEN COUNT(l) > 0 THEN TRUE ELSE FALSE END
             FROM Like l
             WHERE l.post.id = :postId
             AND l.user.id = :userId
             """)
     boolean isLikedByUser(@Param("postId") Long postId, @Param("userId") Long userId);
+     */
+
+    @Query("""
+    SELECT CASE WHEN EXISTS (
+        SELECT 1 FROM Like l
+        WHERE l.post.id = :postId
+        AND l.user.id = :userId
+    ) THEN TRUE ELSE FALSE END
+    """)
+    boolean isLikedByUser(@Param("postId") Long postId, @Param("userId") Long userId);
+
 
     @Modifying
     @Transactional

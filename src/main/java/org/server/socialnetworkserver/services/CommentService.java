@@ -45,7 +45,7 @@ public class CommentService {
         this.notificationController = notificationController;
     }
 
-    @CacheEvict(value = "postCommentsCache", key = "'comments_' + #commentResponse.postId")
+    // @CacheEvict(value = "postCommentsCache", key = "'comments_' + #commentResponse.postId")
     public BasicResponse addComments(@RequestBody CommentResponse commentResponse ){
         User user = userRepository.findByUsername(commentResponse.getUsername());
         Post post = postRepository.findById(commentResponse.getPostId()).orElse(null);
@@ -83,7 +83,7 @@ public class CommentService {
         return new BasicResponse(true,"Add comment success.");
     }
 
-    @Cacheable(value = "postCommentsCache", key = "'comments_' + #postId")
+    // @Cacheable(value = "postCommentsCache", key = "'comments_' + #postId")
     public AllCommentsResponse getAllCommentPost(@PathVariable Long postId){
         List<CommentDto> comments = commentRepository.findAllCommentByPostId(postId);
 

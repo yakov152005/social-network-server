@@ -1,8 +1,13 @@
 package org.server.socialnetworkserver.dtos;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Date;
 import java.util.List;
 
+@Getter
+@Setter
 public class PostDto {
     private long id;
     private String username;
@@ -51,99 +56,6 @@ public class PostDto {
         this.likes = likes;
     }
 
-
-    public List<LikeDto> getLikes() {
-        return likes;
-    }
-
-    public void setLikes(List<LikeDto> likes) {
-        this.likes = likes;
-    }
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public Date getDate() {
-        return date;
-    }
-
-    public void setData(Date date) {
-        this.date = date;
-    }
-
-    public String getProfilePicture() {
-        return profilePicture;
-    }
-
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
-
-    public boolean isLikedByUser() {
-        return isLikedByUser;
-    }
-
-    public void setLikedByUser(boolean likedByUser) {
-        isLikedByUser = likedByUser;
-    }
-
-    public int getLikesCount() {
-        return likesCount;
-    }
-
-    public void setLikesCount(int likesCount) {
-        this.likesCount = likesCount;
-    }
-
-    public int getCommentCount() {
-        return commentCount;
-    }
-
-    public void setCommentCount(int commentCount) {
-        this.commentCount = commentCount;
-    }
-
-    @Override
-    public String toString() {
-        return "PostDto{" +
-                "username='" + username + '\'' +
-                ", content='" + content + '\'' +
-                ", imageUrl='" + imageUrl + '\'' +
-                ", date=" + date +
-                '}';
-    }
 }
 
 

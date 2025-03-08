@@ -16,6 +16,7 @@ import org.server.socialnetworkserver.responses.BasicResponse;
 import org.server.socialnetworkserver.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,8 +43,8 @@ public class LikeService {
         this.notificationController = notificationController;
     }
 
-    @CacheEvict(value = "postLikesCache", key = "'likes_' + #postId")
-    public BasicResponse likePost(@PathVariable Long postId, @PathVariable String username){
+    // @CacheEvict(value = "postLikesCache", key = "'likes_' + #postId")
+   public BasicResponse likePost(@PathVariable Long postId, @PathVariable String username){
         Post post = postRepository.findById(postId).orElse(null);
         User user = userRepository.findByUsername(username);
 
@@ -84,7 +85,7 @@ public class LikeService {
         return new BasicResponse(true, "Post liked successfully.");
     }
 
-    @CacheEvict(value = "postLikesCache", key = "'likes_' + #postId")
+    //  @CacheEvict(value = "postLikesCache", key = "'likes_' + #postId")
     public BasicResponse unlikePost(@PathVariable Long postId, @PathVariable String username){
         Post post = postRepository.findById(postId).orElse(null);
         User user = userRepository.findByUsername(username);
@@ -98,13 +99,13 @@ public class LikeService {
         return new BasicResponse(true,"Unliked success.");
     }
 
-    @Cacheable(value = "postLikesCache", key = "#postId")
+    // @Cacheable(value = "postLikesCache", key = "#postId")
     public int countLikes(@PathVariable Long postId){
         System.out.println("🟢 Fetching count from database for post ID: " + postId);
         return likeRepository.countLikeByPost(postId);
     }
 
-    @Cacheable(value = "postLikesCache", key = "#postId")
+    //  @Cacheable(value = "postLikesCache", key = "#postId")
     public AllLikesResponse getAllLikesPost(@PathVariable Long postId){
         Post post = postRepository.findById(postId).orElse(null);
         if (post == null){

@@ -1,5 +1,6 @@
 package org.server.socialnetworkserver.services;
 
+import org.server.socialnetworkserver.dtos.LikeDto;
 import org.server.socialnetworkserver.dtos.PostDto;
 import org.server.socialnetworkserver.entitys.Post;
 import org.server.socialnetworkserver.entitys.User;
@@ -11,6 +12,7 @@ import org.server.socialnetworkserver.responses.BasicResponse;
 import org.server.socialnetworkserver.responses.PostResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,7 +23,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.server.socialnetworkserver.utils.UploadFileToCloud.uploadFileToCloud;
 
@@ -43,7 +48,7 @@ public class PostService {
         this.commentRepository = commentRepository;
     }
 
-    @CacheEvict(value = {"homeFeedCache", "userPostsCache"}, allEntries = true)
+    // @CacheEvict(value = {"homeFeedCache", "userPostsCache"}, allEntries = true)
     public BasicResponse addPost(String username, String content, MultipartFile postImageFile, String postImageUrl) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
@@ -101,7 +106,7 @@ public class PostService {
         return new PostResponse(true, "All posts by user.", postDtos);
     }
      */
-    @Cacheable(value = "userPostsCache", key = "#username")
+    // @Cacheable(value = "userPostsCache", key = "#username")
     public PostResponse getPostByUserName(String username) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
@@ -132,7 +137,7 @@ public class PostService {
 
 
 
-    @Cacheable(value = "homeFeedCache", key = "#username + '-' + #page")
+   // @Cacheable(value = "homeFeedCache", key = "#username + '-' + #page")
     public PostResponse getHomeFeedPost
             (@PathVariable String username,
              @RequestParam(defaultValue = "0") int page,
@@ -155,6 +160,7 @@ public class PostService {
         if (homeFeedPosts.isEmpty()) {
             return new PostResponse(false, "No posts found for the user.", null);
         }
+
 
         List<PostDto> postDtos = homeFeedPosts.stream()
                 .map(post -> new PostDto(

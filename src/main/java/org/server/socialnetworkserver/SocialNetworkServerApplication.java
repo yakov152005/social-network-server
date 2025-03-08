@@ -7,7 +7,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import java.util.Date;
 
 @SpringBootApplication
-@EnableCaching
+//@EnableCaching
 @EnableScheduling
 public class SocialNetworkServerApplication {
 

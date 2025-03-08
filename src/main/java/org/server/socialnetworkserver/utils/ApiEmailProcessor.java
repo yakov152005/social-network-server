@@ -1,5 +1,9 @@
 package org.server.socialnetworkserver.utils;
+import org.server.socialnetworkserver.config.AppConfig;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Service;
+
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,8 +14,17 @@ import javax.mail.internet.*;
 
 import static org.server.socialnetworkserver.utils.Constants.EmailConstants.*;
 
+@Service
 public class ApiEmailProcessor {
-    public static boolean sendEmail(String recipient, String subject, String content) {
+
+    private final AppConfig appConfig;
+
+    @Autowired
+    public ApiEmailProcessor(AppConfig appConfig) {
+        this.appConfig = appConfig;
+    }
+
+    public boolean sendEmail(String recipient, String subject, String content) {
         final String host = "smtp.gmail.com";
         final int port = 465;
 
@@ -27,14 +40,14 @@ public class ApiEmailProcessor {
         Session session = Session.getInstance(properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(SENDER_EMAIL, SENDER_PASSWORD);
+                return new PasswordAuthentication(appConfig.getSenderEmail(), appConfig.getSenderPassword());
             }
         });
 
         try {
 
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(SENDER_EMAIL,PERSONAL));
+            message.setFrom(new InternetAddress(appConfig.getSenderEmail(),PERSONAL));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
             message.setSubject(subject);
 
@@ -71,6 +84,8 @@ public class ApiEmailProcessor {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
+
     }
 }
 

@@ -1,3 +1,4 @@
+/*
 package org.server.socialnetworkserver.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -35,3 +36,5 @@ public class CacheConfig {
         return cacheManager;
     }
 }
+
+ */

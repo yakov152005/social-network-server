@@ -5,6 +5,7 @@ import org.server.socialnetworkserver.entitys.LoginActivity;
 import org.server.socialnetworkserver.entitys.User;
 import org.server.socialnetworkserver.repositoris.*;
 import org.server.socialnetworkserver.responses.*;
+import org.server.socialnetworkserver.utils.ApiEmailProcessor;
 import org.server.socialnetworkserver.utils.ApiSmsSender;
 import org.server.socialnetworkserver.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.server.socialnetworkserver.services.HelpMethods.*;
-import static org.server.socialnetworkserver.utils.ApiEmailProcessor.sendEmail;
 import static org.server.socialnetworkserver.utils.Constants.Errors.*;
 import static org.server.socialnetworkserver.utils.Constants.UrlClient.URL_CLIENT_PC;
 import static org.server.socialnetworkserver.utils.GeneratorUtils.*;
@@ -38,12 +38,14 @@ public class UserService {
     private final CommentRepository commentRepository;
     private final NotificationRepository notificationRepository;
     private final Map<String, String> verificationCodes = new HashMap<>();
+    private final ApiSmsSender apiSmsSender;
+    private final ApiEmailProcessor apiEmailProcessor;
 
     @Autowired
     public UserService(LikeRepository likeRepository,UserRepository userRepository,
                        PostRepository postRepository, MessageRepository messageRepository,
                        LoginActivityRepository loginActivityRepository,CommentRepository commentRepository,
-                       NotificationRepository notificationRepository
+                       NotificationRepository notificationRepository,ApiSmsSender apiSmsSender,ApiEmailProcessor apiEmailProcessor
     ) {
         this.likeRepository = likeRepository;
         this.userRepository = userRepository;
@@ -52,9 +54,11 @@ public class UserService {
         this.loginActivityRepository = loginActivityRepository;
         this.commentRepository = commentRepository;
         this.notificationRepository = notificationRepository;
+        this.apiSmsSender = apiSmsSender;
+        this.apiEmailProcessor = apiEmailProcessor;
     }
 
-    @Cacheable(value = "numUsersCache")
+    //  @Cacheable(value = "numUsersCache")
     public BasicResponse getNumOfUsers(){
         String numOfUsers = String.valueOf(userRepository.findAll().size());
         return new BasicResponse(true,numOfUsers);
@@ -70,7 +74,7 @@ public class UserService {
         return new TokenResponse(isValid, isValid ? "Token is valid" : "Token is invalid", isValid,username);
     }
 
-    @CacheEvict(value = "numUsersCache", allEntries = true)
+    // @CacheEvict(value = "numUsersCache", allEntries = true)
     public ValidationResponse addUser(@RequestBody User user) {
         User newUser = userRepository.findByUsername(user.getUsername());
 
@@ -94,7 +98,7 @@ public class UserService {
                 .append("Phone number: ").append(user.getPhoneNumber()).append("\n")
                 .append("Email: ").append(user.getEmail());
         System.out.println(userDetails);
-        System.out.println(sendEmail(user.getEmail(), "Details", userDetails.toString()));
+        System.out.println(apiEmailProcessor.sendEmail(user.getEmail(), "Details", userDetails.toString()));
 
 
         String salt = generateSalt();
@@ -120,8 +124,12 @@ public class UserService {
                     String verificationCode = generatorCode();
                     verificationCodes.put(username, verificationCode);
 
+                    apiSmsSender.sendSms("Your verification code: " + verificationCode,
+                            List.of(currentUser.getPhoneNumber()));
+                    /*
                     ApiSmsSender.sendSms("Your verification code: " + verificationCode,
                             List.of(currentUser.getPhoneNumber()));
+                     */
 
                     return new LoginResponse(true, "SMS sent with verification code.", username);
                 }
@@ -199,7 +207,7 @@ public class UserService {
 
 
 
-    @Cacheable(value = "userDetailsCache", key = "#token")
+    // @Cacheable(value = "userDetailsCache", key = "#token")
     public Map<String, Object> getUserDetails(@RequestHeader("Authorization") String token) {
         Map<String, Object> response = new HashMap<>();
 
@@ -252,7 +260,7 @@ public class UserService {
                               + "color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; "
                               + "font-weight: bold; font-size: 16px; box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);\">Reset Password</a>"
                               + "</div>";
-        sendEmail(user.getEmail(), "Confirm Password Reset", emailContent);
+        apiEmailProcessor.sendEmail(user.getEmail(), "Confirm Password Reset", emailContent);
 
 
         return new BasicResponse(true, "An email has been sent with a confirmation link.");
@@ -284,13 +292,13 @@ public class UserService {
                               + "<h5 style=\"color: #333; font-size: 20px;\">Your password has been successfully reset</h5>"
                               + "<p style=\"font-size: 14px; color: #555; font-weight: bold;\">Your new password: " + newPassword + "</p>"
                               + "</div>";
-        sendEmail(user.getEmail(), "Your New Password", emailContent);
+        apiEmailProcessor.sendEmail(user.getEmail(), "Your New Password", emailContent);
 
         return new BasicResponse(true, "Your password has been reset. Check your email for the new password.");
     }
 
 
-    @CacheEvict(value = "userDetailsCache", key = "#username")
+    // @CacheEvict(value = "userDetailsCache", key = "#username")
     public BasicResponse addProfilePicture(String username, MultipartFile profilePictureFile, String profilePictureUrl) {
         User user = userRepository.findByUsername(username);
         if (user == null) {
@@ -318,7 +326,7 @@ public class UserService {
         }
     }
 
-    @Cacheable(value = "allUsersCache")
+    //  @Cacheable(value = "allUsersCache")
     public UserNamesWithPicResponse getAllUserNamesAndPic() {
         List<UsernameWithPicDto> result = userRepository.findAllUsernamesWithPic();
         if (result.isEmpty()) {
@@ -328,7 +336,7 @@ public class UserService {
         return new UserNamesWithPicResponse(true, "All users with pic.", result);
     }
 
-    @CacheEvict(value = {"userDetailsCache", "allUsersCache", "numUsersCache"}, key = "#username")
+    // @CacheEvict(value = {"userDetailsCache", "allUsersCache", "numUsersCache"}, key = "#username")
     @Transactional
     public BasicResponse deleteUser(String username, String password) {
         User user = userRepository.findByUsername(username);

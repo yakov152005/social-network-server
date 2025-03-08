@@ -5,6 +5,7 @@ import java.net.URISyntaxException;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Getter;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 
@@ -20,7 +21,12 @@ public class ApiChatGpt {
     private static final CloseableHttpClient client = HttpClients.createDefault();
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    public static String getResponseFromServer(String  conversation) throws URISyntaxException, IOException {
+    public static void main(String[] args) throws URISyntaxException, IOException {
+        String res = getResponseFromServer("hey");
+        System.out.println(res);
+    }
+
+    public static String getResponseFromServer(String conversation) throws URISyntaxException, IOException {
         URI uri = new URIBuilder(SEND_MESSAGE)
                 .setParameter("id", ID_GPT)
                 .setParameter("text", conversation)
@@ -31,12 +37,20 @@ public class ApiChatGpt {
 
         try (var response = client.execute(get)) {
             String myResponse = EntityUtils.toString(response.getEntity());
+
+
+            System.out.println("Response from server: " + myResponse);
+
             if (!myResponse.isEmpty()) {
-                Response responseObj = mapper.readValue(myResponse, Response.class);
-                if (responseObj.isSuccess()) {
-                    return responseObj.getExtra();
-                } else {
-                    errorCode(responseObj);
+                try {
+                    Response responseObj = mapper.readValue(myResponse, Response.class);
+                    if (responseObj.isSuccess()) {
+                        return responseObj.getExtra();
+                    } else {
+                        errorCode(responseObj);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Failed to parse JSON response: " + e.getMessage());
                 }
             } else {
                 System.err.println("The message was not sent.");
@@ -65,29 +79,16 @@ public class ApiChatGpt {
     }
 
 
+    @Getter
     static class Response {
         private boolean success;
         private String extra;
         private String errorMessage;
         private int errorCode;
 
-        public boolean isSuccess() {
-            return success;
-        }
-
-        public String getExtra() {
-            return extra;
-        }
-
-        public String getErrorMessage() {
-            return errorMessage;
-        }
-
-        public int getErrorCode() {
-            return errorCode;
-        }
     }
 
+    @Getter
     enum ErrorOption {
         E_3_0(3000, "The id is not sent."),
         E_3_1(3001, "This id is not found!"),
@@ -101,14 +102,6 @@ public class ApiChatGpt {
         ErrorOption(int code, String message) {
             this.code = code;
             this.message = message;
-        }
-
-        public int getCode() {
-            return code;
-        }
-
-        public String getMessage() {
-            return message;
         }
 
         public static ErrorOption fromCode(Integer code) {
