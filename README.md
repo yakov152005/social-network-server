@@ -101,7 +101,11 @@ Social-Network-Server/
 
 ---
 
+## Entity-Relationship Diagram (ERD)
 
+![ERD](https://i.imgur.com/qzt7zJx.png)
+
+---
 
 ## 🔄 Installation & Setup
 ```bash
