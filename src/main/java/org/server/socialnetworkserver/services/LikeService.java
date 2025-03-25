@@ -57,12 +57,19 @@ public class LikeService {
             return new BasicResponse(false, "User already liked this post.");
         }
 
+       if (!(post.getUser().getUsername().equals(user.getUsername()))){
+           notificationRepository.deleteExistingNotification(
+                   post.getUser().getId(), user.getId(), Constants.Notification.LIKE, postId
+           );
+       }
+
         Like like = new Like();
         like.setPost(post);
         like.setUser(user);
         likeRepository.save(like);
 
       if (!(post.getUser().getUsername().equals(user.getUsername()))){
+
           Notification notification = new Notification(post.getId(),post.getImageUrl(),post.getUser(),user,user.getProfilePicture(), Constants.Notification.LIKE);
           notificationRepository.save(notification);
 

@@ -34,6 +34,16 @@ public class User{
     private String resetToken; // טוקן איפוס סיסמה
     @Column(nullable = true)
     private LocalDateTime tokenExpiryDate;
+    @Column(nullable = true)
+    private String bio;
+    @Column(nullable = true)
+    private String gender;
+    @Column(nullable = true)
+    private String relationship;
+    @Column(nullable = false)
+    private String twoFactor;
+    @Column(nullable = true)
+    private String fullName;
 
     @OneToMany(mappedBy = "following", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Follow> followers;
@@ -50,5 +60,9 @@ public class User{
 
     @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> receivedMessages;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Stories> stories;
+
 }
 

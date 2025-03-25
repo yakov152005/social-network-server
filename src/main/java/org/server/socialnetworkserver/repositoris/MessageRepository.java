@@ -24,6 +24,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             """)
     List<Message> findMessagesByUser(@Param("username") String username);
 
+    /*
     @Query("""
         SELECT DISTINCT new org.server.socialnetworkserver.dtos.ChatUserDto(
             CASE
@@ -39,6 +40,36 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
         WHERE (m.sender.username = :username OR m.receiver.username = :username)
         """)
     List<ChatUserDto> findChatUsers(@Param("username") String username);
+     */
+
+    @Query("""
+    SELECT new org.server.socialnetworkserver.dtos.ChatUserDto(
+        CASE
+            WHEN m.sender.username = :username THEN m.receiver.username
+            ELSE m.sender.username
+        END,
+        CASE
+            WHEN m.sender.username = :username THEN m.receiver.profilePicture
+            ELSE m.sender.profilePicture
+        END,
+        m.content,
+        m.sentAt
+    )
+    FROM Message m
+    WHERE m.id IN (
+        SELECT MAX(m2.id)
+        FROM Message m2
+        WHERE m2.sender.username = :username OR m2.receiver.username = :username
+        GROUP BY
+            CASE
+                WHEN m2.sender.username = :username THEN m2.receiver.username
+                ELSE m2.sender.username
+            END
+    )
+    ORDER BY m.sentAt DESC
+    """)
+    List<ChatUserDto> findChatUsers(@Param("username") String username);
+
 
 
     @Query("""

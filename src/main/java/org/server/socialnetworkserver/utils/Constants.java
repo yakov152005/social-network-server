@@ -7,7 +7,7 @@ public class Constants {
     public static Dotenv dotenv = Dotenv.load();
 
     public static class ForTest{
-        //public static final String URL_TEST = dotenv.get("URL_TEST");
+        // public static final String URL_TEST = dotenv.get("URL_TEST");
         public static final String URL_TEST = "https://social-network-server-m0ef.onrender.com/slow-endpoint";
     }
 
@@ -19,7 +19,7 @@ public class Constants {
 
     public static class UrlClient{
         public static final String URL_SERVER = "/social-network";
-        //public static final String URL_CLIENT_PC = dotenv.get("URL_CLIENT_PC");
+        // public static final String URL_CLIENT_PC = dotenv.get("URL_CLIENT_PC");
         public static final String URL_CLIENT_PC = "https://social-network-client-k8fp.onrender.com";
     }
 
@@ -33,7 +33,7 @@ public class Constants {
     }
 
     public static class SmsConstants{
-        public static final String SMS_SENDER = "NETWORKAPI";
+        public static final String SMS_SENDER = "NETWORK-API";
         //public static final String SMS_TOKEN = dotenv.get("SMS_TOKEN");
         public static final String URL_SMS = "https://capi.inforu.co.il/api/v2/SMS/SendSms";
     }

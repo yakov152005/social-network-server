@@ -53,9 +53,9 @@ public class ApiEmailProcessor {
 
             MimeBodyPart textPart = new MimeBodyPart();
             String htmlContent = "<html><body>"
-                    + "<h3>" + subject + "</h3>"
-                    + "<p>" + content.replace("\n", "<br>") + "</p>"
-                    + "</body></html>";
+                                 + "<h3>" + subject + "</h3>"
+                                 + "<p>" + content.replace("\n", "<br>") + "</p>"
+                                 + "</body></html>";
             textPart.setContent(htmlContent, "text/html; charset=UTF-8");
 
             MimeBodyPart imagePart = new MimeBodyPart();
@@ -87,5 +87,5 @@ public class ApiEmailProcessor {
 
 
     }
-}
 
+}

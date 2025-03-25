@@ -37,9 +37,19 @@ public class StreamController {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         dateEmitters.add(emitter);
 
-        emitter.onCompletion(() -> dateEmitters.remove(emitter));
-        emitter.onError((throwable -> dateEmitters.remove(emitter)));
-        emitter.onTimeout(() -> dateEmitters.remove(emitter));
+        emitter.onCompletion(() -> {
+            dateEmitters.remove(emitter);
+            emitter.complete();
+        });
+        emitter.onTimeout(() -> {
+            dateEmitters.remove(emitter);
+            emitter.complete();
+        });
+        emitter.onError((throwable) -> {
+            dateEmitters.remove(emitter);
+            emitter.completeWithError(throwable);
+        });
+
 
         return emitter;
     }
@@ -49,11 +59,26 @@ public class StreamController {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
         userEmitters.computeIfAbsent(username, key -> new CopyOnWriteArrayList<>()).add(emitter);
 
-        emitter.onCompletion(() -> userEmitters.get(username).remove(emitter));
-        emitter.onError((throwable -> userEmitters.get(username).remove(emitter)));
-        emitter.onTimeout(() -> userEmitters.get(username).remove(emitter));
+        emitter.onCompletion(() -> cleanupUserEmitter(username, emitter));
+        emitter.onError((throwable) -> cleanupUserEmitter(username, emitter));
+        emitter.onTimeout(() -> cleanupUserEmitter(username, emitter));
 
         return emitter;
+    }
+
+    private void cleanupUserEmitter(String username, SseEmitter emitter) {
+        List<SseEmitter> emitters = userEmitters.get(username);
+        if (emitters != null) {
+            emitters.remove(emitter);
+            if (emitters.isEmpty()) {
+                userEmitters.remove(username);
+            }
+        }
+        try {
+            emitter.complete();
+        } catch (Exception e) {
+            System.out.println("Check Stream controller.");
+        }
     }
 
 
@@ -67,7 +92,7 @@ public class StreamController {
                 System.out.println("Current server time: " + date);
             } catch (IOException e) {
                 dateEmitters.remove(emitter);
-                System.out.println("זיהה ריענון שרת/יציאה מהשרת");
+                System.out.println("Detected client disconnect during date stream.");
             }
         }
     }
@@ -84,7 +109,9 @@ public class StreamController {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                System.out.println("זיהה ריענון שרת/יציאה מהשרת");
+                System.out.println("Detected server shutdown.");
+                Thread.currentThread().interrupt();
+                break;
             }
         }
     }
@@ -100,7 +127,7 @@ public class StreamController {
                             .data(messageDto));
                 } catch (IOException e) {
                     System.out.println("Failed to send message to user: " + receiverUsername + ". Removing emitter.");
-                    emitters.remove(emitter);
+                    cleanupUserEmitter(receiverUsername, emitter);
                 }
 
             }

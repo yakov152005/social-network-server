@@ -8,10 +8,7 @@ import org.server.socialnetworkserver.entitys.Notification;
 import org.server.socialnetworkserver.entitys.Post;
 import org.server.socialnetworkserver.entitys.User;
 import org.server.socialnetworkserver.repositoris.*;
-import org.server.socialnetworkserver.responses.AllFollowResponse;
-import org.server.socialnetworkserver.responses.BasicResponse;
-import org.server.socialnetworkserver.responses.FollowResponse;
-import org.server.socialnetworkserver.responses.ProfileResponse;
+import org.server.socialnetworkserver.responses.*;
 import org.server.socialnetworkserver.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -133,10 +130,12 @@ public class FollowService {
         ProfileDto profileDto = new ProfileDto(
                 searchUser.getUsername(),
                 searchUser.getProfilePicture(),
+                searchUser.getBio(),
                 profileStats.getFollowersCount(),
                 profileStats.getFollowingCount(),
                 profileStats.isFollowing(),
-                postDtos
+                postDtos,
+                searchUser.getFullName()
         );
 
         return new ProfileResponse(true, "Profile response success.", profileDto);
@@ -144,16 +143,16 @@ public class FollowService {
 
     // @Cacheable(value = "followersCache", key = "#username")
     public FollowResponse getFollower(@PathVariable String username){
-       List<FollowDto> getAllFollowers = followRepository.getAllFollowers(username);
-       List<FollowDto> getAllFollowing = followRepository.getAllFollowing(username);
+        List<FollowDto> getAllFollowers = followRepository.getAllFollowers(username);
+        List<FollowDto> getAllFollowing = followRepository.getAllFollowing(username);
 
-       if ((getAllFollowers.isEmpty() && getAllFollowing.isEmpty())){
-           return new FollowResponse(false,"Empty followers and following",null,null);
-       }
+        if ((getAllFollowers.isEmpty() && getAllFollowing.isEmpty())){
+            return new FollowResponse(false,"Empty followers and following",null,null);
+        }
 
 
 
-       return new FollowResponse(true,"Success get followers and following",getAllFollowers,getAllFollowing);
+        return new FollowResponse(true,"Success get followers and following",getAllFollowers,getAllFollowing);
     }
 
 
@@ -171,10 +170,15 @@ public class FollowService {
             return new BasicResponse(false,"You are already following this user.");
         }
 
+        notificationRepository.deleteExistingNotification(
+                userToFollow.getId(), currentUser.getId(), "FOLLOW", null
+        );
+
         Follow follow = new Follow();
         follow.setFollower(currentUser);
         follow.setFollowing(userToFollow);
         followRepository.save(follow);
+
 
         Notification notification = new Notification(userToFollow, currentUser, currentUser.getProfilePicture(), Constants.Notification.FOLLOW);
         notificationRepository.save(notification);
@@ -195,6 +199,7 @@ public class FollowService {
         return new BasicResponse(true,"Followed successfully!");
     }
 
+
     //  @CacheEvict(value = {"followersCache", "profileCache", "followCountCache"}, key = "#currentUsername + '_' + #username")
     @Transactional
     public BasicResponse unfollowUser(String username, String currentUsername) {
@@ -208,4 +213,21 @@ public class FollowService {
         followRepository.deleteByFollowerAndFollowing(currentUser, userToUnFollow);
         return new BasicResponse(true, "Unfollowed successfully");
     }
+
+
+    public SuggestedFriendsResponse getSuggestedFriends(String username){
+        User user = userRepository.findByUsername(username);
+        if (user == null){
+            return new SuggestedFriendsResponse(false, "User not found.");
+        }
+
+        List<SuggestedFriendsDto> suggested = followRepository.getSuggestedFriends(username);
+
+        if (suggested.isEmpty()){
+            return new SuggestedFriendsResponse(true, "No suggested friends available.");
+        }
+
+        return new SuggestedFriendsResponse(true, "All suggested send.", suggested);
+    }
+
 }

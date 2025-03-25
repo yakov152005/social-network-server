@@ -138,48 +138,49 @@ public class PostService {
 
 
    // @Cacheable(value = "homeFeedCache", key = "#username + '-' + #page")
-    public PostResponse getHomeFeedPost
-            (@PathVariable String username,
-             @RequestParam(defaultValue = "0") int page,
-             @RequestParam(defaultValue = "10") int size)
-    {
-        System.out.println("Received request - Username: " + username + ", Page: " + page + ", Size: " + size);
-        System.out.println("Fetching posts from database for: " + username + ", Page: " + page);
+   public PostResponse getHomeFeedPost
+   (@PathVariable String username,
+    @RequestParam(defaultValue = "0") int page,
+    @RequestParam(defaultValue = "10") int size)
+   {
+       System.out.println("Received request - Username: " + username + ", Page: " + page + ", Size: " + size);
+       System.out.println("Fetching posts from database for: " + username + ", Page: " + page);
 
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            System.out.println("No posts found for this page.");
+       User user = userRepository.findByUsername(username);
+       if (user == null) {
+           System.out.println("No posts found for this page.");
 
-            return new PostResponse(false, "User not found.", null);
-        }
-
-
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Post> homeFeedPosts = postRepository.findHomeFeedPosts(username, pageable);
-
-        if (homeFeedPosts.isEmpty()) {
-            return new PostResponse(false, "No posts found for the user.", null);
-        }
+           return new PostResponse(false, "User not found.", null);
+       }
 
 
-        List<PostDto> postDtos = homeFeedPosts.stream()
-                .map(post -> new PostDto(
-                        post.getId(),
-                        post.getUser().getUsername(),
-                        post.getUser().getProfilePicture(),
-                        post.getContent(),
-                        post.getImageUrl(),
-                        post.getDate(),
-                        likeRepository.isLikedByUser(post.getId(),user.getId()),
-                        likeRepository.countLikeByPost(post.getId()),
-                        commentRepository.countCommentByPostId(post.getId()),
-                        likeRepository.findAllLikesByPostId(post.getId())
-                ))
-                .toList();
+       Pageable pageable = PageRequest.of(page, size);
+       Page<Post> homeFeedPosts = postRepository.findHomeFeedPosts(username, pageable);
 
-        System.out.println("Returning " + postDtos.size() + " posts for page " + page);
-        return new PostResponse(true, "All posts home feed.", postDtos);
-    }
+       if (homeFeedPosts.isEmpty()) {
+           return new PostResponse(false, "No posts found for the user.", null);
+       }
+
+
+       List<PostDto> postDtos = homeFeedPosts.stream()
+               .map(post -> new PostDto(
+                       post.getId(),
+                       post.getUser().getUsername(),
+                       post.getUser().getProfilePicture(),
+                       post.getContent(),
+                       post.getImageUrl(),
+                       post.getDate(),
+                       likeRepository.isLikedByUser(post.getId(),user.getId()),
+                       likeRepository.countLikeByPost(post.getId()),
+                       commentRepository.countCommentByPostId(post.getId()),
+                       likeRepository.findAllLikesByPostId(post.getId())
+               ))
+               .toList();
+
+       System.out.println("Returning " + postDtos.size() + " posts for page " + page);
+       return new PostResponse(true, "All posts home feed.", postDtos);
+   }
+
 
 
 }

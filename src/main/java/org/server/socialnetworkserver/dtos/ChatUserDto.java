@@ -1,27 +1,22 @@
 package org.server.socialnetworkserver.dtos;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Date;
+
+@Getter
+@Setter
 public class ChatUserDto {
     private String receiver;
     private String profilePicture;
+    private String lastMessage;
+    private Date lastMessageTime;
 
-    public ChatUserDto(String receiver, String profilePicture) {
+    public ChatUserDto(String receiver, String profilePicture, String lastMessage, Date lastMessageTime) {
         this.receiver = receiver;
         this.profilePicture = profilePicture;
-    }
-
-    public String getReceiver() {
-        return receiver;
-    }
-
-    public void setReceiver(String receiver) {
-        this.receiver = receiver;
-    }
-
-    public String getProfilePicture() {
-        return profilePicture;
-    }
-
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
+        this.lastMessage = lastMessage;
+        this.lastMessageTime = lastMessageTime;
     }
 }

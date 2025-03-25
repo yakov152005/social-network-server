@@ -1,8 +1,5 @@
 package org.server.socialnetworkserver.controllers;
-import org.server.socialnetworkserver.responses.AllFollowResponse;
-import org.server.socialnetworkserver.responses.BasicResponse;
-import org.server.socialnetworkserver.responses.FollowResponse;
-import org.server.socialnetworkserver.responses.ProfileResponse;
+import org.server.socialnetworkserver.responses.*;
 import org.server.socialnetworkserver.services.FollowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -43,8 +40,13 @@ public class FollowController {
     }
 
     @GetMapping("/get-all-followers-following/{username}")
-    private FollowResponse getAllFollowersAndFollowing(@PathVariable String username){
+    public FollowResponse getAllFollowersAndFollowing(@PathVariable String username){
         return followService.getFollower(username);
+    }
+
+    @GetMapping("/suggested/{username}")
+    public SuggestedFriendsResponse getSuggestedFriends(@PathVariable String username){
+        return followService.getSuggestedFriends(username);
     }
 
 

@@ -1,5 +1,6 @@
 package org.server.socialnetworkserver.services;
 
+import org.server.socialnetworkserver.dtos.UserSettingsDto;
 import org.server.socialnetworkserver.dtos.UsernameWithPicDto;
 import org.server.socialnetworkserver.entitys.LoginActivity;
 import org.server.socialnetworkserver.entitys.User;
@@ -42,10 +43,10 @@ public class UserService {
     private final ApiEmailProcessor apiEmailProcessor;
 
     @Autowired
-    public UserService(LikeRepository likeRepository,UserRepository userRepository,
+    public UserService(LikeRepository likeRepository, UserRepository userRepository,
                        PostRepository postRepository, MessageRepository messageRepository,
-                       LoginActivityRepository loginActivityRepository,CommentRepository commentRepository,
-                       NotificationRepository notificationRepository,ApiSmsSender apiSmsSender,ApiEmailProcessor apiEmailProcessor
+                       LoginActivityRepository loginActivityRepository, CommentRepository commentRepository,
+                       NotificationRepository notificationRepository, ApiSmsSender apiSmsSender, ApiEmailProcessor apiEmailProcessor
     ) {
         this.likeRepository = likeRepository;
         this.userRepository = userRepository;
@@ -59,19 +60,19 @@ public class UserService {
     }
 
     //  @Cacheable(value = "numUsersCache")
-    public BasicResponse getNumOfUsers(){
+    public BasicResponse getNumOfUsers() {
         String numOfUsers = String.valueOf(userRepository.findAll().size());
-        return new BasicResponse(true,numOfUsers);
+        return new BasicResponse(true, numOfUsers);
     }
 
     public TokenResponse validateToken(String cleanToken) {
         boolean isValid = JwtUtils.isTokenValid(cleanToken);
         String username = "";
-        if (isValid){
+        if (isValid) {
             username = JwtUtils.extractUsername(cleanToken);
         }
 
-        return new TokenResponse(isValid, isValid ? "Token is valid" : "Token is invalid", isValid,username);
+        return new TokenResponse(isValid, isValid ? "Token is valid" : "Token is invalid", isValid, username);
     }
 
     // @CacheEvict(value = "numUsersCache", allEntries = true)
@@ -100,7 +101,7 @@ public class UserService {
         System.out.println(userDetails);
         System.out.println(apiEmailProcessor.sendEmail(user.getEmail(), "Details", userDetails.toString()));
 
-
+        System.out.println(user.getTwoFactor());
         String salt = generateSalt();
         String hashedPassword = hashPassword(user.getPassword(), salt);
         user.setSalt(salt);
@@ -121,17 +122,24 @@ public class UserService {
 
                 String hashedPassword = hashPassword(password, currentUser.getSalt());
                 if (hashedPassword.equals(currentUser.getPasswordHash())) {
-                    String verificationCode = generatorCode();
-                    verificationCodes.put(username, verificationCode);
+                    if (currentUser.getTwoFactor().equals("enabled")){
+                        String verificationCode = generatorCode();
+                        verificationCodes.put(username, verificationCode);
 
-                    apiSmsSender.sendSms("Your verification code: " + verificationCode,
-                            List.of(currentUser.getPhoneNumber()));
-                    /*
-                    ApiSmsSender.sendSms("Your verification code: " + verificationCode,
-                            List.of(currentUser.getPhoneNumber()));
-                     */
+                        apiSmsSender.sendSms("Your verification code: " + verificationCode,
+                                List.of(currentUser.getPhoneNumber()));
 
-                    return new LoginResponse(true, "SMS sent with verification code.", username);
+                        return new LoginResponse(true, "SMS sent with verification code.", username);
+                    }else {
+                        String token = JwtUtils.generateToken(username);
+                        Map<String, String> result = new HashMap<>();
+                        result.put("token", token);
+                        result.put("message", "Login successfully");
+                        return new LoginResponse(true,"Login successfully.",username,result);
+                    }
+
+                }else {
+                    return new LoginResponse(false, "The password is incorrect.", null);
                 }
             } else {
                 return new LoginResponse(false, "This username is not exist!", null);
@@ -150,12 +158,12 @@ public class UserService {
                 LoginActivity session = loginActivityRepository.findByUsername(username);
 
 
-                if (session != null){
-                    System.out.println(session.getUser().getUsername()  + "current session");
+                if (session != null) {
+                    System.out.println(session.getUser().getUsername() + "current session");
                     session.setUser(session.getUser());
                     session.setDate(new Date());
                     loginActivityRepository.save(session);
-                }else {
+                } else {
                     LoginActivity newSession = new LoginActivity();
                     newSession.setUser(userRepository.findByUsername(username));
                     System.out.println(newSession.getUser().getUsername() + " new session");
@@ -178,6 +186,7 @@ public class UserService {
         String username = changePasswordDetails.get("username");
         String currentPassword = changePasswordDetails.get("currentPassword");
         String newPassword = changePasswordDetails.get("newPassword");
+        String twoFactor = changePasswordDetails.get("twoFactor");
 
         boolean checkNewPassword = checkPassword(newPassword);
 
@@ -195,6 +204,7 @@ public class UserService {
 
                 user.setSalt(newSalt);
                 user.setPasswordHash(hashedPassword);
+                user.setTwoFactor(twoFactor);
                 userRepository.save(user);
 
                 return new BasicResponse(true, "The password successful Changed");
@@ -204,7 +214,6 @@ public class UserService {
         }
         return new BasicResponse(false, ERROR_3);
     }
-
 
 
     // @Cacheable(value = "userDetailsCache", key = "#token")
@@ -222,9 +231,16 @@ public class UserService {
             return response;
         }
         String username = JwtUtils.extractUsername(cleanToken);
-        String profilePicture = userRepository.findByUsername(username).getProfilePicture();
+        User user = userRepository.findByUsername(username);
+        String profilePicture = user.getProfilePicture();
+        String bio = user.getBio();
+        String twoFactor = user.getTwoFactor();
+        String fullName = user.getFullName();
         response.put("username", username);
-        response.put("profilePicture",profilePicture);
+        response.put("profilePicture", profilePicture);
+        response.put("bio",bio);
+        response.put("twoFactor",twoFactor);
+        response.put("fullName",fullName);
 
         return response;
     }
@@ -336,6 +352,7 @@ public class UserService {
         return new UserNamesWithPicResponse(true, "All users with pic.", result);
     }
 
+
     // @CacheEvict(value = {"userDetailsCache", "allUsersCache", "numUsersCache"}, key = "#username")
     @Transactional
     public BasicResponse deleteUser(String username, String password) {
@@ -375,5 +392,47 @@ public class UserService {
     }
 
 
+    public UserSettingsResponse getUserSettings(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user == null) {
+            return new UserSettingsResponse(false, "User not found.");
+        }
+        UserSettingsDto userSettingsDto =
+                new UserSettingsDto(
+                        user.getUsername(),
+                        user.getEmail(),
+                        user.getProfilePicture(),
+                        user.getBio(),
+                        user.getGender(),
+                        user.getRelationship(),
+                        user.getFullName()
+                );
 
+        return new UserSettingsResponse(true, "Send Settings", userSettingsDto);
+    }
+
+
+    public UserSettingsResponse changeUserSettings(Map<String, String> changeUserSettingsDetails) {
+        String username = changeUserSettingsDetails.get("username");
+        User user = userRepository.findByUsername(username);
+        if (username.isEmpty() && user == null) {
+            return new UserSettingsResponse(false, "User not found.");
+        }
+
+        String bio = changeUserSettingsDetails.get("bio");
+        String gender = changeUserSettingsDetails.get("gender");
+        String relationship = changeUserSettingsDetails.get("relationship");
+        String fullName = changeUserSettingsDetails.get("fullName");
+
+        user.setBio(bio);
+        user.setGender(gender);
+        user.setRelationship(relationship);
+        user.setFullName(fullName);
+        userRepository.save(user);
+
+        UserSettingsDto userSettingsDto = new UserSettingsDto(user.getUsername(), user.getEmail(), user.getProfilePicture(),
+                user.getBio(), user.getGender(), user.getRelationship(), user.getFullName());
+
+        return new UserSettingsResponse(true, "Save successfully.", userSettingsDto);
+    }
 }

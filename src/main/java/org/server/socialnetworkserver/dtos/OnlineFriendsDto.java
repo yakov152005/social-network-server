@@ -5,16 +5,19 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UsernameWithPicDto {
+public class OnlineFriendsDto {
+    private long id;
     private String username;
     private String profilePicture;
-    private String bio;
 
-    public UsernameWithPicDto(String username, String profilePicture,String bio) {
+
+    public OnlineFriendsDto(long id, String username, String profilePicture) {
+        this.id = id;
         this.username = username;
         this.profilePicture = profilePicture;
-        this.bio = bio;
     }
 
-}
+    public OnlineFriendsDto(){
 
+    }
+}

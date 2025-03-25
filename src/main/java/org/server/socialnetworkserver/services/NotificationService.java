@@ -31,7 +31,7 @@ public class NotificationService {
             return new AllNotificationResponse(false,"User is not found.",null);
         }
 
-        List<NotificationDto> notificationDto= notificationRepository.findUnreadNotifications(username);
+        List<NotificationDto> notificationDto = notificationRepository.findUnreadNotifications(username);
         return new AllNotificationResponse(true,"All notification send.",notificationDto);
     }
 }

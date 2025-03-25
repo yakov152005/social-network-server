@@ -2,6 +2,10 @@
 🔹 **Production Version**  
 [Click here to access the live production version](https://social-network-client-k8fp.onrender.com/login)
 
+🔹 **Client Side**  
+[Click here to go client side](https://github.com/yakov152005/social-network-client)
+
+
 ---
 
 ## 🎯 Overview
@@ -18,11 +22,11 @@ This backend provides **authentication, caching, real-time updates, email & SMS 
 🔒 **Security:** Spring Security, JWT (JSON Web Tokens), Password Hashing (SHA-256 + Salt)  
 📡 **Real-Time Updates:** SSE (Server-Sent Events)  
 📦 **Database:** MySQL (optimized queries & indexes using JPA)  
-📨 **Email & SMS Verification:** Twilio, Mailgun  
+📨 **Email & SMS Verification:** Twilio, Mailgun  & Custom api
 📸 **Cloud Storage:** Cloudinary for media uploads  
 ⚡ **Caching:** **Spring Boot Caching** for optimized performance  
 🗄 **Scheduled Jobs:** CRON Job (session tracking, expired token cleanup)  
-📋 **Environment Configuration:** Dotenv for managing variables  
+📋 **Environment Configuration:** Dotenv for local & AppConfig managing variables for production.   
 🐳 **Containerization & Deployment:** Docker + Render + GitHub Actions (CI/CD)
 
 ---
@@ -59,17 +63,18 @@ This backend provides **authentication, caching, real-time updates, email & SMS 
 - **Spring Boot Caching** improves response times and reduces redundant queries.
 
 ### **4️⃣ Real-Time Notifications & Messaging**
-- **SSE (Server-Sent Events)** used for real-time notifications/messages.
+- **SSE (Server-Sent Events)** used for real-time notifications/messages/comments/stories/online friends.
 - Users get **instant alerts for likes, follows, and comments**.
 
 ### **5️⃣ Automated Jobs & Expiration Handling**
 - **CRON Jobs** run monthly to check for inactive users & send reminders.
+- **CRON Jobs** run 24 hours ago to remove stories after 24 hours ago.
 - **Token expiration handling** ensures security by removing stale sessions.
 
 ### **6️⃣ Deployment & Scaling**
 - **Dockerized environment** ensures consistency across deployments.
 - **CI/CD pipeline (GitHub Actions) automates deployment** to Render.
-- Environment variables managed securely with `.env` files.
+- Environment variables managed securely with AppConfig and `.env` files.
 
 ---
 
@@ -90,12 +95,13 @@ Social-Network-Server/
 │    ├── 📂 responses       # Custom API responses
 │    ├── 📂 services        # Business logic layer
 │    ├── 📂 test            # Unit & integration tests
-│    ├── 📂 utils           # Helper functions, token & password generators & utilities
+│    ├── 📂 utils           # Helper functions, JWT token & password generators & utilities & Api sms/email/gpt
 │    └── SocialNetworkServerApplication  # Main application with enabled annotations  
 ├── 📂 resources             # Application properties settings  
 │    
 ├── Dockerfile              # Docker container setup  
 ├── .env                    # Environment variable template for local use  
+├── pom.xml                 # Mvn dependencies
 └── README.md               # Project documentation  
 ```
 
@@ -103,7 +109,7 @@ Social-Network-Server/
 
 ## Entity-Relationship Diagram (ERD)
 
-![ERD](https://i.imgur.com/qzt7zJx.png)
+![ERD](https://i.imgur.com/oGsvnZv.png)
 
 ---
 
@@ -188,7 +194,7 @@ public BasicResponse confirmResetPassword(@RequestParam String token){
 ## 📡 Real-Time Features
 
 📡 **SSE for Instant Updates**
-- Notifications for **likes, comments, follows, messages**.
+- Notifications for **likes, comments, follows, messages, online friends, stories**.
 - Real-time updates without excessive polling.
 
 📢 **Automated Email & SMS Alerts**

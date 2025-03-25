@@ -2,6 +2,8 @@ package org.server.socialnetworkserver.responses;
 
 import org.server.socialnetworkserver.dtos.ProfileDto;
 
+
+
 public class ProfileResponse extends BasicResponse{
     private ProfileDto profileDto;
 

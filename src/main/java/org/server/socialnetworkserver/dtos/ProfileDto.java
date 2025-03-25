@@ -1,21 +1,34 @@
 package org.server.socialnetworkserver.dtos;
 import java.util.List;
 
+
 public class ProfileDto{
     private String username;
     private String profilePicture;
+    private String bio;
     private int followers;
     private int following;
     private boolean isFollowing;
     private List<PostDto> posts;
+    private String fullName;
 
-    public ProfileDto(String username, String profilePicture, int followers, int following, boolean isFollowing, List<PostDto> posts) {
+    public ProfileDto(String username, String profilePicture,String bio, int followers, int following, boolean isFollowing, List<PostDto> posts, String fullName) {
         this.username = username;
         this.profilePicture = profilePicture;
+        this.bio = bio;
         this.followers = followers;
         this.following = following;
         this.isFollowing = isFollowing;
         this.posts = posts;
+        this.fullName = fullName;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 
     public String getUsername() {
@@ -62,5 +75,13 @@ public class ProfileDto{
 
     public void setPosts(List<PostDto> posts) {
         this.posts = posts;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 }

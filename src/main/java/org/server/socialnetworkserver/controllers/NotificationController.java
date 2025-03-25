@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.server.socialnetworkserver.utils.Constants.UrlClient.URL_SERVER;
@@ -22,38 +24,40 @@ import static org.server.socialnetworkserver.utils.Constants.UrlClient.URL_SERVE
 public class NotificationController {
 
     private final NotificationService notificationService;
-    private final CopyOnWriteArrayList<SseEmitter> emitters;
+    private final Map<String, SseEmitter> emitters;
 
     @Autowired
     public NotificationController(NotificationService notificationService){
         this.notificationService = notificationService;
-        this.emitters = new CopyOnWriteArrayList<>();
+        this.emitters =  new ConcurrentHashMap<>();;
     }
 
 
-    @GetMapping("/notifications/connect")
-    public SseEmitter connect() {
+    @GetMapping("/notifications/connect/{username}")
+    public SseEmitter connect(@PathVariable String username) {
         SseEmitter emitter = new SseEmitter(Long.MAX_VALUE);
-        emitters.add(emitter);
+        emitters.put(username, emitter);
 
-        emitter.onCompletion(() -> emitters.remove(emitter));
-        emitter.onError((throwable -> emitters.remove(emitter)));
-        emitter.onTimeout(() -> emitters.remove(emitter));
+        emitter.onCompletion(() -> emitters.remove(username));
+        emitter.onError((throwable) -> emitters.remove(username));
+        emitter.onTimeout(() -> emitters.remove(username));
 
         return emitter;
     }
 
     public void sendNotification(String username, NotificationDto notificationDto) {
-        emitters.forEach(emitter -> {
+        SseEmitter emitter = emitters.get(username);
+        if (emitter != null) {
             try {
                 emitter.send(SseEmitter.event()
                         .name("notification")
                         .data(notificationDto, MediaType.APPLICATION_JSON));
             } catch (IOException e) {
-                emitters.remove(emitter);
+                emitters.remove(username);
             }
-        });
+        }
     }
+
 
     @GetMapping("/get-all-notification/{username}")
     public AllNotificationResponse getAllNotification(@PathVariable String username){

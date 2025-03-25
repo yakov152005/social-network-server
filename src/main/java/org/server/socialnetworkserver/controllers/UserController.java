@@ -1,4 +1,5 @@
 package org.server.socialnetworkserver.controllers;
+import org.server.socialnetworkserver.dtos.UserSettingsDto;
 import org.server.socialnetworkserver.responses.*;
 import org.server.socialnetworkserver.entitys.User;
 import org.server.socialnetworkserver.services.UserService;
@@ -100,5 +101,14 @@ public class UserController {
         return userService.deleteUser(username,password);
     }
 
+    @GetMapping("/get-user-settings/{username}")
+    public UserSettingsResponse getUserSettings(@PathVariable String username){
+        return userService.getUserSettings(username);
+    }
+
+    @PostMapping("/change-user-settings")
+    public UserSettingsResponse changeUserSettings(@RequestBody Map<String, String> changeUserSettingsDetails){
+        return userService.changeUserSettings(changeUserSettingsDetails);
+    }
 }
 

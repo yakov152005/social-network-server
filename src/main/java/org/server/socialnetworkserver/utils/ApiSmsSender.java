@@ -45,12 +45,10 @@ public class ApiSmsSender {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("Content-Type", "application/json");
         httpHeaders.add("Authorization", "Basic " + appConfig.getSmsToken());
-        System.out.println(appConfig.getSmsToken());
 
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<?> httpEntity = new HttpEntity<Object>(jsonObject.toString(), httpHeaders);
         ResponseEntity<String> response = restTemplate.exchange(URL_SMS, HttpMethod.POST, httpEntity, String.class);
-        System.out.println(response);
     }
 
 

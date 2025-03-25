@@ -1,7 +1,6 @@
 package org.server.socialnetworkserver.repositoris;
 
-import org.server.socialnetworkserver.dtos.FollowDto;
-import org.server.socialnetworkserver.dtos.ProfileStatsDto;
+import org.server.socialnetworkserver.dtos.*;
 import org.server.socialnetworkserver.entitys.Follow;
 import org.server.socialnetworkserver.entitys.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -76,6 +75,18 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
     List<ProfileStatsDto> getProfileStats(@Param("username") String username, @Param("currentUserId") Long currentUserId);
 
 
+    @Query("""
+    SELECT new org.server.socialnetworkserver.dtos.SuggestedFriendsDto(
+        u.id, u.username, u.profilePicture,
+        CASE WHEN f.id IS NOT NULL THEN true ELSE false END
+    )
+    FROM User u
+    LEFT JOIN Follow f ON f.follower.username = :currentUsername AND f.following = u
+    WHERE u.username != :currentUsername
+    AND f.id IS NULL
+    """)
+    List<SuggestedFriendsDto> getSuggestedFriends(@Param("currentUsername") String currentUsername);
+
 
 
     @Modifying
@@ -85,5 +96,16 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
             """)
     void deleteByFollowerAndFollowing(@Param("follower") User follower, @Param("following") User following);
 
+    @Query("SELECT f.following.id FROM Follow f WHERE f.follower.id = :userId")
+    List<Long> findFollowingIdsByUserId(@Param("userId") Long userId);
+
+    @Query("""
+    SELECT new org.server.socialnetworkserver.dtos.OnlineFriendsDto
+    (u.id, u.username, u.profilePicture)
+    FROM Follow f
+    JOIN f.following u
+    WHERE f.follower.id = :userId
+    """)
+    List<OnlineFriendsDto> findFollowingUsersByUserId(@Param("userId") Long userId);
 
 }
