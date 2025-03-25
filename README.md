@@ -23,9 +23,10 @@ This backend provides **authentication, caching, real-time updates, email & SMS 
 📡 **Real-Time Updates:** SSE (Server-Sent Events)  
 📦 **Database:** MySQL (optimized queries & indexes using JPA)  
 📨 **Email & SMS Verification:** Twilio, Mailgun  & Custom api
+
 📸 **Cloud Storage:** Cloudinary for media uploads  
 ⚡ **Caching:** **Spring Boot Caching** for optimized performance  
-🗄 **Scheduled Jobs:** CRON Job (session tracking, expired token cleanup)  
+🗄 **Scheduled Jobs:** CRON Job (session tracking, expired token cleanup, remove stories after 24 hours ago, sends an email to users who have not logged in for over a month)  
 📋 **Environment Configuration:** Dotenv for local & AppConfig managing variables for production.   
 🐳 **Containerization & Deployment:** Docker + Render + GitHub Actions (CI/CD)
 
@@ -207,6 +208,11 @@ public BasicResponse confirmResetPassword(@RequestParam String token){
 
 🕒 **Runs once per month**
 - Sends **reminder emails** to inactive users.
+
+🕒 **Runs once per 24 hours**
+- Checks for **expired stories more than 24 hours have passed** and removes them.
+  
+🕒 **Runs once per day**
 - Checks for **expired authentication tokens** and removes them.
 
 ---
