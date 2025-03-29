@@ -1,19 +1,24 @@
-# 🚀 Social Network - Server Side
-🔹 **Production Version**  
+# 🌐 Social Network - Server Side
+
+🎯 **Production Version**  
 [Click here to access the live production version](https://social-network-client-k8fp.onrender.com/login)
 
-🔹 **Client Side**  
+🖥️ **Client Repository**  
 [Click here to go client side](https://github.com/yakov152005/social-network-client)
 
 
 ---
+## 🧠 Backend Architecture
 
-## 🎯 Overview
-The backend of **Social Network** is developed using **Java & Spring Boot**, offering a **secure, scalable, and optimized REST API**.  
-The architecture follows a **layered design**, ensuring clear separation of concerns:  
+The backend of **Social Network** is developed using **Java & Spring Boot**, offering a **secure, scalable, and optimized REST API**.
+
+The architecture follows a **layered and object-oriented design (OOP)**, ensuring clear separation of concerns and maintainable code.  
 📌 **Entities** → **Repositories** → **Services** → **Controllers** → **DTOs** → **Responses**
 
-This backend provides **authentication, caching, real-time updates, email & SMS verification**, and **scheduled jobs for maintenance**. It is fully **Dockerized and deployed with CI/CD using GitHub Actions and Render**.
+This backend leverages both **OOP principles** and **declarative programming paradigms**, using **Java Streams**, **annotations** (e.g., `@Service`,`@Compoment`,`@Get/Post/RequestBody-Mapping`,`@Caching`,`@Bean`,`@Configuration`, `@Transactional`, `@Scheduled`, `@RestController`, `@andmore`), and **functional-style programming** to write **clean, reusable, and readable code**.
+
+This backend provides **authentication, caching, real-time updates, email & SMS verification**, and **scheduled jobs for maintenance**.  
+It is fully **Dockerized and deployed with CI/CD using GitHub Actions and Render**.
 
 ---
 
@@ -22,8 +27,7 @@ This backend provides **authentication, caching, real-time updates, email & SMS 
 🔒 **Security:** Spring Security, JWT (JSON Web Tokens), Password Hashing (SHA-256 + Salt)  
 📡 **Real-Time Updates:** SSE (Server-Sent Events)  
 📦 **Database:** MySQL (optimized queries & indexes using JPA)  
-📨 **Email & SMS Verification:** Twilio, Mailgun  & Custom api
-
+📨 **Email & SMS Verification:** Twilio, Mailgun  & Custom api  
 📸 **Cloud Storage:** Cloudinary for media uploads  
 ⚡ **Caching:** **Spring Boot Caching** for optimized performance  
 🗄 **Scheduled Jobs:** CRON Job (session tracking, expired token cleanup, remove stories after 24 hours ago, sends an email to users who have not logged in for over a month)  
@@ -44,19 +48,19 @@ This backend provides **authentication, caching, real-time updates, email & SMS 
 
 ### **2️⃣ Authentication & Security**
 - **User Registration:**
-    - Strong password validation & uniqueness check (email/phone).
-    - If valid, **an email is sent with account details**.
-    - **Password is hashed & salted (SHA-256)** before storage.
+  - Strong password validation & uniqueness check (email/phone).
+  - If valid, **an email is sent with account details**.
+  - **Password is hashed & salted (SHA-256)** before storage.
 
 - **Login Process:**
-    - User enters credentials → **JWT is generated**.
-    - **2FA SMS verification** is sent to the phone.
-    - On success, session starts & **user gains access**.
+  - User enters credentials → **JWT is generated**.
+  - **2FA SMS verification** is sent to the phone.
+  - On success, session starts & **user gains access**.
 
 - **Password Reset:**
-    - User requests reset → **Receives email with a unique token**.
-    - User enters token & new password → **New hashed & salted password is saved**.
-    - Confirmation email is sent.
+  - User requests reset → **Receives email with a unique token**.
+  - User enters token & new password → **New hashed & salted password is saved**.
+  - Confirmation email is sent.
 
 ### **3️⃣ Data Storage & Optimization**
 - MySQL database with **efficient JPA queries and indexes**.
@@ -211,7 +215,7 @@ public BasicResponse confirmResetPassword(@RequestParam String token){
 
 🕒 **Runs once per 24 hours**
 - Checks for **expired stories more than 24 hours have passed** and removes them.
-  
+
 🕒 **Runs once per day**
 - Checks for **expired authentication tokens** and removes them.
 
@@ -225,15 +229,17 @@ public BasicResponse confirmResetPassword(@RequestParam String token){
 
 ---
 
-## 📩 Contact & Contribute
+## 🤝 Contribute
+**Pull Requests welcome!**
+- 📧 Contact: yakovbenhemo5@gmail.com
 
-💡 Contributions are welcome via **Pull Requests**.  
-Feel free to reach out via email: 📧 yakovbenhemo5@gmail.com
+> Built with ❤️ by a passionate full-stack dev – from backend logic to UI animations, everything is handcrafted for performance and beauty.
+
+---
+
+## 🔗 Explore
+- 🖥️ [Client GitHub Repo](https://github.com/yakov152005/social-network-client)
+- 🌐 [Live Demo](https://social-network-client-k8fp.onrender.com/login)
 
 
-🚀 **Built for a seamless and secure social networking experience!** 🌍  
-
-
-
-
-
+🚀 **Enjoy the Social Network Experience!** 🌍
